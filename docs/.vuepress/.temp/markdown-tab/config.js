@@ -1,6 +1,6 @@
-import { CodeTabs } from "/Users/zengzhixiang/Downloads/coins.github.io/node_modules/@vuepress/plugin-markdown-tab/lib/client/components/CodeTabs.js";
-import { Tabs } from "/Users/zengzhixiang/Downloads/coins.github.io/node_modules/@vuepress/plugin-markdown-tab/lib/client/components/Tabs.js";
-import "/Users/zengzhixiang/Downloads/coins.github.io/node_modules/@vuepress/plugin-markdown-tab/lib/client/styles/vars.css";
+import { CodeTabs } from "/Users/zengzhixiang/doc-test/node_modules/@vuepress/plugin-markdown-tab/lib/client/components/CodeTabs.js";
+import { Tabs } from "/Users/zengzhixiang/doc-test/node_modules/@vuepress/plugin-markdown-tab/lib/client/components/Tabs.js";
+import "/Users/zengzhixiang/doc-test/node_modules/@vuepress/plugin-markdown-tab/lib/client/styles/vars.css";
 
 export default {
   enhance: ({ app }) => {

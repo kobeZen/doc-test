@@ -1,5 +1,5 @@
-import { GitContributors } from "/Users/zengzhixiang/Downloads/coins.github.io/node_modules/@vuepress/plugin-git/lib/client/components/GitContributors.js";
-import { GitChangelog } from "/Users/zengzhixiang/Downloads/coins.github.io/node_modules/@vuepress/plugin-git/lib/client/components/GitChangelog.js";
+import { GitContributors } from "/Users/zengzhixiang/doc-test/node_modules/@vuepress/plugin-git/lib/client/components/GitContributors.js";
+import { GitChangelog } from "/Users/zengzhixiang/doc-test/node_modules/@vuepress/plugin-git/lib/client/components/GitChangelog.js";
 
 export default {
   enhance: ({ app }) => {
