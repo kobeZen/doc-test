@@ -15,71 +15,141 @@
   --c-danger: #f44336;
 }
 
-// 暗色主题 - 优化版
+// 暗色主题 - 专业配色方案
 .dark {
-  --c-bg: #0f1419;
-  --c-bg-light: #1a1f29;
-  --c-text: #e8eaed;
-  --c-text-light: #9aa0a6;
-  --c-border: #2d3748;
-  --c-brand: #4fc3f7;
-  --c-brand-light: #29b6f6;
-  --c-brand-dark: #0288d1;
-  --c-accent: #26a69a;
-  --c-success: #66bb6a;
-  --c-warning: #ffb74d;
-  --c-danger: #ef5350;
+  --c-bg: #1e1e2f;
+  --c-bg-light: #2a2a3c;
+  --c-text: #f5f5f5;
+  --c-text-light: #a0a0a0;
+  --c-border: #2f2f40;
+  --c-brand: #4fc1ff;
+  --c-brand-light: #00bfff;
+  --c-brand-dark: #3a9ce8;
+  --c-accent: #7ec699;
+  --c-success: #50fa7b;
+  --c-warning: #ff9d00;
+  --c-danger: #ff5555;
   
-  // 深色模式下的主体背景渐变
+  // 强制覆盖所有可能的背景色
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+  
+  // 深色模式下的主体背景 - 专业深紫灰
   body {
-    background: linear-gradient(135deg, #0f1419 0%, #1a1f29 100%);
+    background: linear-gradient(135deg, #1e1e2f 0%, #0e0e16 50%, #1e1e2f 100%) !important;
+  }
+  
+  // 深色模式下的页面容器
+  .page {
+    background: transparent !important;
+  }
+  
+  // 深色模式下的主要容器
+  .theme-container {
+    background: transparent !important;
+  }
+  
+  // 强制覆盖所有可能的容器背景
+  div, section, article, main {
+    background-color: transparent !important;
   }
   
   // 深色模式下的导航栏
   .navbar {
-    background: linear-gradient(90deg, #1a1f29 0%, #252d3d 100%);
-    backdrop-filter: blur(10px);
+    background: linear-gradient(90deg, rgba(47, 47, 64, 0.95) 0%, rgba(52, 52, 72, 0.95) 100%);
+    backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--c-border);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
   }
   
   // 深色模式下的侧边栏
   .sidebar {
-    background: linear-gradient(180deg, #1a1f29 0%, #252d3d 100%);
-    backdrop-filter: blur(10px);
+    background: linear-gradient(180deg, rgba(47, 47, 64, 0.95) 0%, rgba(52, 52, 72, 0.95) 100%);
+    backdrop-filter: blur(12px);
     border-right: 1px solid var(--c-border);
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 2px 0 20px rgba(0, 0, 0, 0.3);
   }
   
-  // 深色模式下的代码块
+  // 深色模式下的内容区域背景
+  .theme-default-content {
+    background: rgba(30, 30, 47, 0.9) !important;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--c-border);
+    margin: 1rem;
+    padding: 2rem;
+  }
+  
+  // 确保主内容容器也是透明
+  .page-content {
+    background: transparent !important;
+  }
+  
+  // 确保整个内容包装器是透明
+  .content-wrapper {
+    background: transparent !important;
+  }
+  
+  // 特别针对内容区域的强制覆盖
+  .theme-default-content,
+  .theme-default-content div,
+  .theme-default-content section,
+  .theme-default-content main,
+  .content__default {
+    background: transparent !important;
+  }
+  
+  // 深色模式下的代码块 - 专业代码配色
   .theme-default-content pre {
-    background: linear-gradient(135deg, #1e2329 0%, #2a2f3a 100%);
-    border: 1px solid #404854;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+    background: linear-gradient(135deg, #2a2a3c 0%, #1e1e30 100%);
+    border: 1px solid var(--c-border);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3), 0 4px 8px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(8px);
+    
+    code {
+      color: #e6e6e6;
+      font-family: 'Fira Code', 'JetBrains Mono', 'Monaco', 'Menlo', monospace;
+    }
+  }
+  
+  // 内联代码样式
+  .theme-default-content p code,
+  .theme-default-content li code {
+    background: linear-gradient(135deg, #2a2a3c 0%, rgba(79, 193, 255, 0.1) 100%);
+    color: #e6e6e6;
+    border: 1px solid var(--c-border);
   }
   
   // 深色模式下的表格
   .theme-default-content table {
+    background: rgba(47, 47, 64, 0.6);
+    border-radius: 8px;
+    overflow: hidden;
+    
     th {
-      background: linear-gradient(90deg, #252d3d 0%, #2a323f 100%);
+      background: linear-gradient(90deg, rgba(79, 193, 255, 0.2) 0%, rgba(0, 191, 255, 0.2) 100%);
       border-color: var(--c-border);
+      color: var(--c-brand-light);
     }
     
     tr:nth-child(even) {
-      background-color: rgba(42, 50, 63, 0.5);
+      background-color: rgba(47, 47, 64, 0.3);
     }
     
     tr:hover {
-      background-color: rgba(79, 195, 247, 0.1);
+      background-color: rgba(79, 193, 255, 0.1);
       transition: background-color 0.3s ease;
     }
   }
   
   // 深色模式下的引用块
   .theme-default-content blockquote {
-    background: linear-gradient(90deg, rgba(79, 195, 247, 0.1) 0%, rgba(79, 195, 247, 0.05) 100%);
+    background: linear-gradient(90deg, rgba(79, 193, 255, 0.15) 0%, rgba(79, 193, 255, 0.08) 100%);
     border-left: 4px solid var(--c-brand);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(8px);
   }
   
   // 深色模式下的链接
@@ -88,21 +158,110 @@
     
     &:hover {
       color: var(--c-brand-light);
-      text-shadow: 0 0 8px rgba(79, 195, 247, 0.3);
+      text-shadow: 0 0 8px rgba(79, 193, 255, 0.4);
       transition: all 0.3s ease;
     }
   }
   
+  // 深色模式下的标题优化
+  .theme-default-content h1 {
+    background: linear-gradient(45deg, var(--c-brand) 0%, var(--c-accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  .theme-default-content h2 {
+    color: var(--c-text);
+    border-bottom-color: var(--c-border);
+    
+    &::after {
+      background: linear-gradient(90deg, var(--c-brand) 0%, var(--c-brand-light) 100%);
+    }
+  }
+  
+  .theme-default-content h3 {
+    color: var(--c-brand);
+  }
+  
   // 深色模式下的搜索框
   .search-box input {
-    background-color: var(--c-bg-light);
+    background-color: rgba(47, 47, 64, 0.8);
     border: 1px solid var(--c-border);
     color: var(--c-text);
+    backdrop-filter: blur(8px);
     
     &:focus {
       border-color: var(--c-brand);
-      box-shadow: 0 0 0 2px rgba(79, 195, 247, 0.2);
+      box-shadow: 0 0 0 2px rgba(79, 193, 255, 0.3);
     }
+  }
+  
+  // 成功、警告、错误状态样式
+  .theme-default-content .custom-container.tip {
+    border-color: var(--c-success);
+    background: linear-gradient(90deg, rgba(80, 250, 123, 0.1) 0%, rgba(80, 250, 123, 0.05) 100%);
+  }
+  
+  .theme-default-content .custom-container.warning {
+    border-color: var(--c-warning);
+    background: linear-gradient(90deg, rgba(255, 157, 0, 0.1) 0%, rgba(255, 157, 0, 0.05) 100%);
+  }
+  
+  .theme-default-content .custom-container.danger {
+    border-color: var(--c-danger);
+    background: linear-gradient(90deg, rgba(255, 85, 85, 0.1) 0%, rgba(255, 85, 85, 0.05) 100%);
+  }
+  
+  // 深色模式下的文字选择效果
+  *::selection,
+  ::selection {
+    background: linear-gradient(45deg, rgba(79, 193, 255, 0.6) 0%, rgba(0, 191, 255, 0.8) 100%) !important;
+    color: #ffffff !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+    backdrop-filter: blur(2px);
+  }
+  
+  *::-moz-selection,
+  ::-moz-selection {
+    background: linear-gradient(45deg, rgba(79, 193, 255, 0.6) 0%, rgba(0, 191, 255, 0.8) 100%) !important;
+    color: #ffffff !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+  }
+  
+  // 确保深色模式下特定元素的选择样式
+  p::selection,
+  h1::selection,
+  h2::selection,
+  h3::selection,
+  h4::selection,
+  h5::selection,
+  h6::selection,
+  div::selection,
+  span::selection,
+  strong::selection,
+  em::selection,
+  a::selection,
+  li::selection {
+    background: rgba(79, 193, 255, 0.7) !important;
+    color: #ffffff !important;
+  }
+  
+  p::-moz-selection,
+  h1::-moz-selection,
+  h2::-moz-selection,
+  h3::-moz-selection,
+  h4::-moz-selection,
+  h5::-moz-selection,
+  h6::-moz-selection,
+  div::-moz-selection,
+  span::-moz-selection,
+  strong::-moz-selection,
+  em::-moz-selection,
+  a::-moz-selection,
+  li::-moz-selection {
+    background: rgba(79, 193, 255, 0.7) !important;
+    color: #ffffff !important;
   }
 }
 
@@ -519,7 +678,7 @@ html {
   
   &:hover {
     background: linear-gradient(180deg, var(--c-brand-light) 0%, var(--c-brand) 100%);
-    box-shadow: 0 4px 8px rgba(25, 118, 210, 0.4);
+    box-shadow: 0 4px 8px rgba(80, 163, 186, 0.4);
     transform: scale(1.1);
   }
   
@@ -542,23 +701,24 @@ html {
 // 深色模式下的滚动条优化
 .dark {
   ::-webkit-scrollbar-track {
-    background: var(--c-bg-light);
+    background: rgba(47, 47, 64, 0.6);
     border: 1px solid var(--c-border);
-    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(8px);
   }
   
   ::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, #4fc3f7 0%, #0288d1 100%);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+    background: linear-gradient(180deg, var(--c-brand) 0%, var(--c-brand-dark) 100%);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
     
     &:hover {
-      background: linear-gradient(180deg, #29b6f6 0%, #4fc3f7 100%);
-      box-shadow: 0 4px 8px rgba(79, 195, 247, 0.4);
+      background: linear-gradient(180deg, var(--c-brand-light) 0%, var(--c-brand) 100%);
+      box-shadow: 0 4px 8px rgba(79, 193, 255, 0.4);
     }
   }
   
   ::-webkit-scrollbar-corner {
-    background: var(--c-bg-light);
+    background: rgba(47, 47, 64, 0.6);
     border: 1px solid var(--c-border);
   }
 }
@@ -582,12 +742,6 @@ html {
       background: linear-gradient(180deg, var(--c-brand-light) 0%, var(--c-brand) 100%);
     }
   }
-}
-
-// 选择文本样式增强
-::selection {
-  background: linear-gradient(45deg, var(--c-brand) 0%, var(--c-brand-light) 100%);
-  color: white;
 }
 
 // 主题切换按钮样式增强
@@ -628,4 +782,54 @@ html {
       outline: none;
     }
   }
+}
+
+// 选择文本样式增强 - 浅色模式
+*::selection,
+::selection {
+  background: linear-gradient(45deg, #1976d2 0%, #1565c0 100%) !important;
+  color: #ffffff !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+}
+
+*::-moz-selection,
+::-moz-selection {
+  background: linear-gradient(45deg, #1976d2 0%, #1565c0 100%) !important;
+  color: #ffffff !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+}
+
+// 确保特定元素的选择样式
+p::selection,
+h1::selection,
+h2::selection,
+h3::selection,
+h4::selection,
+h5::selection,
+h6::selection,
+div::selection,
+span::selection,
+strong::selection,
+em::selection,
+a::selection,
+li::selection {
+  background: #1976d2 !important;
+  color: #ffffff !important;
+}
+
+p::-moz-selection,
+h1::-moz-selection,
+h2::-moz-selection,
+h3::-moz-selection,
+h4::-moz-selection,
+h5::-moz-selection,
+h6::-moz-selection,
+div::-moz-selection,
+span::-moz-selection,
+strong::-moz-selection,
+em::-moz-selection,
+a::-moz-selection,
+li::-moz-selection {
+  background: #1976d2 !important;
+  color: #ffffff !important;
 } 
