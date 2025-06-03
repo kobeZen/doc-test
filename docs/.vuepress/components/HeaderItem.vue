@@ -1,12 +1,12 @@
 <template>
   <li class="header-item" :class="[`level-${header.level}`, { 'has-children': hasChildren, 'is-expanded': isExpanded, 'is-active': isActive }]">
-    <div class="header-content">
+    <div class="header-content" @click="handleToggle">
       <!-- 展开/折叠按钮 -->
       <button 
         v-if="hasChildren"
         class="expand-btn"
         :class="{ 'expanded': isExpanded }"
-        @click="handleToggle"
+        
       >
         <svg class="expand-icon" viewBox="0 0 24 24" width="20" height="20">
           <path fill="currentColor" d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/>
@@ -130,10 +130,10 @@ const handleToggle = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
+  width: 30px;
+  height: 30px;
   margin-right: 0.5rem;
-  margin-top: 0.15rem;
+  margin-top: -1px;
   background: none;
   border: none;
   border-radius: 4px;
@@ -155,10 +155,10 @@ const handleToggle = () => {
 }
 
 .expand-placeholder {
-  width: 24px;
-  height: 24px;
+  width: 30px;
+  height: 30px;
   margin-right: 0.5rem;
-  margin-top: 0.25rem;
+  // margin-top: 0.25rem;
   flex-shrink: 0;
 }
 
@@ -187,17 +187,7 @@ const handleToggle = () => {
     font-weight: 600;
     position: relative;
     
-    &::before {
-      content: '';
-      position: absolute;
-      left: -0.8rem;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 3px;
-      height: 80%;
-      background: linear-gradient(to bottom, #1976d2, #42a5f5);
-      border-radius: 2px;
-    }
+   
   }
 }
 

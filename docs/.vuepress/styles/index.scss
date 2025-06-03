@@ -143,7 +143,7 @@
     }
     
     tbody tr:nth-child(odd) td {
-      background: rgba(42, 42, 60, 0.5) !important;
+      background: #fff!important;
       color: #e5e5e5 !important;
     }
     
@@ -176,7 +176,7 @@
   // 额外覆盖 VuePress 默认表格样式
   table {
     tbody tr:nth-child(odd) {
-      background: rgba(42, 42, 60, 0.5) !important;
+      background: rgba(47, 47, 64, 0.6) !important;
       
       td {
         background: rgba(42, 42, 60, 0.5) !important;
@@ -280,6 +280,7 @@
   }
   
   // 确保深色模式下特定元素的选择样式
+  code::selection,
   p::selection,
   h1::selection,
   h2::selection,
@@ -292,7 +293,10 @@
   strong::selection,
   em::selection,
   a::selection,
-  li::selection {
+  li::selection,
+  table::selection,
+  td::selection,
+  th::selection {
     background: rgba(79, 193, 255, 0.7) !important;
     color: #ffffff !important;
   }
@@ -309,7 +313,10 @@
   strong::-moz-selection,
   em::-moz-selection,
   a::-moz-selection,
-  li::-moz-selection {
+  li::-moz-selection,
+  table::-moz-selection,
+  td::-moz-selection,
+  th::-moz-selection {
     background: rgba(79, 193, 255, 0.7) !important;
     color: #ffffff !important;
   }
@@ -319,7 +326,9 @@
 * {
   box-sizing: border-box;
 }
-
+tbody tr:nth-child(odd) {
+  background: #fff !important;
+}
 // 平滑滚动
 html {
   scroll-behavior: smooth;
@@ -429,10 +438,6 @@ html {
   .navbar-brand {
     font-weight: 700;
     font-size: 1.4rem;
-    background: linear-gradient(45deg, var(--c-brand) 0%, var(--c-accent) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
   }
   
   .navbar-items {
@@ -855,6 +860,7 @@ html {
 }
 
 // 确保特定元素的选择样式
+code::selection,
 p::selection,
 h1::selection,
 h2::selection,
@@ -867,7 +873,10 @@ span::selection,
 strong::selection,
 em::selection,
 a::selection,
-li::selection {
+li::selection,
+table::selection,
+td::selection,
+th::selection {
   background: #1976d2 !important;
   color: #ffffff !important;
 }
@@ -884,7 +893,10 @@ span::-moz-selection,
 strong::-moz-selection,
 em::-moz-selection,
 a::-moz-selection,
-li::-moz-selection {
+li::-moz-selection,
+table::-moz-selection,
+td::-moz-selection,
+th::-moz-selection {
   background: #1976d2 !important;
   color: #ffffff !important;
 } 

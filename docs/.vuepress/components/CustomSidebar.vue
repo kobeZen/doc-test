@@ -223,15 +223,30 @@ const scrollToHeader = (slug) => {
 // 切换标题展开状态
 const toggleHeader = (slug) => {
   const expanded = expandedHeaders.value
+  const header = findHeaderBySlug(pageHeaders.value, slug)
+  
+  if (!header) return
+  
   if (expanded.has(slug)) {
+    // 如果当前是展开状态，则收起
     expanded.delete(slug)
-    // 如果收起，也收起所有子菜单
-    const header = findHeaderBySlug(pageHeaders.value, slug)
-    if (header) {
-      closeAllChildren(header)
-    }
+    closeAllChildren(header)
   } else {
+    // 如果当前是收起状态，则展开
     expanded.add(slug)
+    
+    // 手风琴效果：如果是顶级菜单，收起其他同级的顶级菜单
+    const minLevel = Math.min(...pageHeaders.value.map(h => h.level))
+    if (header.level === minLevel) {
+      // 当前是顶级菜单，收起其他同级的顶级菜单
+      const topLevelHeaders = pageHeaders.value.filter(h => h.level === minLevel)
+      topLevelHeaders.forEach(h => {
+        if (h.slug !== slug && expanded.has(h.slug)) {
+          expanded.delete(h.slug)
+          closeAllChildren(h)
+        }
+      })
+    }
   }
 }
 

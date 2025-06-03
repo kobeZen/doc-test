@@ -12,9 +12,10 @@
     <!-- 主内容区域 -->
     <div class="main-container">
       <!-- 头部导航栏 -->
-      <header class="navbar">
-        <div class="navbar-content">
-          <!-- 移动端菜单按钮 -->
+      <div class="navbar-container">
+        <header class="navbar">
+          <div class="navbar-content">
+            <!-- 移动端菜单按钮 -->
           <button 
             class="sidebar-toggle"
             :class="{ 'active': isSidebarOpen }"
@@ -56,7 +57,10 @@
               @click="toggleTheme"
               :title="isDark ? '切换到浅色主题' : '切换到深色主题'"
             >
-              <span class="theme-icon">{{ isDark ? '☀️' : '🌙' }}</span>
+              <!-- 浅色主题图标 (太阳) -->
+              <img v-if="isDark" class="theme-icon" src="/icons/theme/sun.svg" alt="Light theme" width="20" height="20" />
+              <!-- 深色主题图标 (月亮) -->
+              <img v-else class="theme-icon" src="/icons/theme/moon.svg" alt="Dark theme" width="20" height="20" />
             </button>
           </div>
         </div>
@@ -77,7 +81,7 @@
           </nav>
         </div>
       </header>
-
+    </div>
       <!-- 页面内容 -->
       <main class="page-content">
         <!-- 自定义侧边栏 -->
@@ -273,24 +277,27 @@ onUnmounted(() => {
     margin-left: 0;
   }
 }
-
-.navbar {
+.navbar-container {
+ 
   background: white;
   border-bottom: 1px solid var(--c-border);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   position: sticky;
   top: 0;
-  z-index: 50;
-  
+  z-index: 999;
+}
+.navbar {
+  max-width: 1920px;
+  border-bottom: none;
+  box-shadow: none;
   .navbar-content {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0 2rem;
     height: 60px;
-    margin: 0 auto;
     width: 100%;
-    max-width: 1920px;
+    border-bottom: none;
+    box-shadow: none;
     
     @media (min-width: 1200px) {
       padding: 0 3rem;
@@ -349,7 +356,7 @@ onUnmounted(() => {
     .navbar-title {
       font-size: 1.2rem;
       font-weight: 600;
-      color: var(--c-brand);
+      color: #1976d2;
       
       @media (max-width: 480px) {
         font-size: 1rem;
@@ -359,10 +366,10 @@ onUnmounted(() => {
   
   .navbar-nav {
     display: flex;
-    justify-content: center;
     flex: 1;
     margin: 0 2rem;
-    
+    justify-content: space-around;
+    max-width: 900px;
     @media (max-width: 1024px) {
       margin: 0 1rem;
     }
@@ -401,7 +408,7 @@ onUnmounted(() => {
       &.is-active {
         color: var(--c-brand);
         font-weight: 700;
-        background-color: rgba(25, 118, 210, 0.08);
+        // background-color: rgba(25, 118, 210, 0.08);
         
         /* 下划线效果 */
         &::after {
@@ -452,8 +459,8 @@ onUnmounted(() => {
     
     .theme-toggle {
       background: none;
-      border: 1px solid var(--c-border);
       border-radius: 6px;
+      border: none;
       padding: 0.5rem;
       cursor: pointer;
       transition: all 0.3s ease;
@@ -479,7 +486,7 @@ onUnmounted(() => {
   
   .content-wrapper {
     margin-left: 280px;
-    max-width: calc(100% - 280px);
+    max-width: calc(1920px - 280px);
     padding: 2rem;
     
     @media (max-width: 1024px) {
@@ -626,6 +633,12 @@ onUnmounted(() => {
 
 // 暗色主题
 .dark-theme {
+  .navbar-title {
+    color: #fff!important;
+  }
+  .header-text {
+    color: #fff!important;
+  }
   .navbar {
     background: var(--c-bg-light);
     
@@ -639,7 +652,6 @@ onUnmounted(() => {
         &.is-active {
           color: #74b9ff;
           font-weight: 700;
-          background-color: rgba(116, 185, 255, 0.12);
           
           &::after {
             background: linear-gradient(90deg, #74b9ff 0%, #0984e3 100%);
