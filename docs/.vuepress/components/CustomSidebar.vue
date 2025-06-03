@@ -15,7 +15,7 @@
             @keydown.enter="performSearch"
           >
           <button class="search-button" @click="performSearch">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <circle cx="11" cy="11" r="8"></circle>
               <path d="m21 21-4.35-4.35"></path>
             </svg>
@@ -33,7 +33,7 @@
           </div>
         </div>
         <div v-if="searchQuery && searchResults.length === 0" class="no-results">
-          未找到相关内容
+          No relevant content found
         </div>
       </div>
       
@@ -83,6 +83,7 @@ const activeHeaderSlug = ref('')
 const searchQuery = ref('')
 const searchResults = ref([])
 const expandedHeaders = ref(new Set()) // 管理展开的标题
+const isScrollingToHeader = ref(false) // 控制是否正在滚动到指定标题
 
 // 页面标题映射
 const pageTitleMap = {
@@ -192,6 +193,12 @@ const isActiveHeader = (slug) => {
 const scrollToHeader = (slug) => {
   const element = document.getElementById(slug)
   if (element) {
+    // 设置标志，临时禁用 Intersection Observer 的自动更新
+    isScrollingToHeader.value = true
+    
+    // 立即设置活跃标题
+    activeHeaderSlug.value = slug
+    
     // 获取导航栏高度
     const navbar = document.querySelector('.navbar')
     const navbarHeight = navbar ? navbar.offsetHeight : 60
@@ -205,7 +212,11 @@ const scrollToHeader = (slug) => {
       behavior: 'smooth'
     })
     
-    activeHeaderSlug.value = slug
+    // 滚动完成后重新启用 Intersection Observer
+    // 使用较长的延迟确保滚动动画完成
+    setTimeout(() => {
+      isScrollingToHeader.value = false
+    }, 1000)
   }
 }
 
@@ -340,12 +351,24 @@ const generateId = () => {
 // 滚动到搜索结果
 const scrollToResult = (result) => {
   if (result.element) {
+    // 临时禁用 Intersection Observer 的自动更新
+    isScrollingToHeader.value = true
+    
     result.element.scrollIntoView({ behavior: 'smooth', block: 'center' })
     // 高亮元素
     result.element.style.backgroundColor = '#fff3cd'
     setTimeout(() => {
       result.element.style.backgroundColor = ''
     }, 2000)
+    
+    // 清空搜索结果
+    searchQuery.value = ''
+    searchResults.value = []
+    
+    // 重新启用 Intersection Observer
+    setTimeout(() => {
+      isScrollingToHeader.value = false
+    }, 1000)
   }
 }
 
@@ -367,11 +390,16 @@ const initIntersectionObserver = () => {
   
   const options = {
     root: null,
-    rootMargin: `-${navbarHeight + 10}px 0px -60% 0px`,
+    rootMargin: `-${navbarHeight + 60}px 0px -80% 0px`,
     threshold: 0
   }
   
   observer = new IntersectionObserver((entries) => {
+    // 如果正在手动滚动到指定标题，忽略 Observer 的更新
+    if (isScrollingToHeader.value) {
+      return
+    }
+    
     // 找到第一个可见的标题
     const visibleEntries = entries.filter(entry => entry.isIntersecting)
     
@@ -533,6 +561,7 @@ const flattenHeaders = (headers) => {
     border-radius: 3px;
   }
   
+
   &::-webkit-scrollbar-thumb {
     background: transparent;
     border-radius: 3px;
@@ -575,7 +604,6 @@ const flattenHeaders = (headers) => {
     
     &:focus-within {
       border-color: #1976d2;
-      box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
     }
     
     .search-input {
@@ -585,7 +613,7 @@ const flattenHeaders = (headers) => {
       padding: 0.75rem 1rem;
       font-size: 0.9rem;
       background: transparent;
-      
+      box-shadow: none;
       &::placeholder {
         color: #6c757d;
       }
@@ -594,13 +622,14 @@ const flattenHeaders = (headers) => {
     .search-button {
       background: none;
       border: none;
-      padding: 0.75rem;
+      padding: 0.875rem;
       cursor: pointer;
       color: #6c757d;
-      transition: color 0.3s ease;
+      transition: all 0.3s ease;
       
       &:hover {
         color: #1976d2;
+        background-color: rgba(25, 118, 210, 0.05);
       }
     }
   }
@@ -743,20 +772,20 @@ const flattenHeaders = (headers) => {
 }
 
 // 图标字体
-.icon-home::before { content: '🏠'; }
-.icon-websocket::before { content: '🔗'; }
-.icon-user::before { content: '👤'; }
-.icon-error::before { content: '⚠️'; }
-.icon-page::before { content: '📄'; }
-.icon-h1::before { content: '1️⃣'; }
-.icon-h2::before { content: '2️⃣'; }
-.icon-h3::before { content: '3️⃣'; }
-.icon-h4::before { content: '4️⃣'; }
-.icon-h5::before { content: '5️⃣'; }
-.icon-h6::before { content: '6️⃣'; }
-.icon-header::before { content: '📝'; }
-.icon-external::before { content: '🌐'; }
-.icon-github::before { content: '📁'; }
+.icon-home::before { content: '🏠'; font-size: 1.2em; }
+.icon-websocket::before { content: '🔗'; font-size: 1.2em; }
+.icon-user::before { content: '👤'; font-size: 1.2em; }
+.icon-error::before { content: '⚠️'; font-size: 1.2em; }
+.icon-page::before { content: '📄'; font-size: 1.2em; }
+.icon-h1::before { content: '1️⃣'; font-size: 1.1em; }
+.icon-h2::before { content: '2️⃣'; font-size: 1.1em; }
+.icon-h3::before { content: '3️⃣'; font-size: 1.1em; }
+.icon-h4::before { content: '4️⃣'; font-size: 1.1em; }
+.icon-h5::before { content: '5️⃣'; font-size: 1.1em; }
+.icon-h6::before { content: '6️⃣'; font-size: 1.1em; }
+.icon-header::before { content: '📝'; font-size: 1.1em; }
+.icon-external::before { content: '🌐'; font-size: 1.2em; }
+.icon-github::before { content: '📁'; font-size: 1.2em; }
 
 // 暗色主题
 .custom-sidebar.dark-theme {
@@ -781,7 +810,6 @@ const flattenHeaders = (headers) => {
       
       &:focus-within {
         border-color: #64b5f6;
-        box-shadow: 0 0 0 3px rgba(100, 181, 246, 0.15);
       }
       
       .search-input {
@@ -797,6 +825,7 @@ const flattenHeaders = (headers) => {
         
         &:hover {
           color: #64b5f6;
+          background-color: rgba(100, 181, 246, 0.1);
         }
       }
     }
@@ -896,4 +925,4 @@ const flattenHeaders = (headers) => {
     }
   }
 }
-</style> 
+</style>

@@ -20,7 +20,7 @@ export default defineUserConfig({
     logo: 'https://static.pro.coins.xyz/static_web/static_pro/images/logo_icon.svg',
 
     navbar: [
-      { text: 'Home', link: '/' },
+      { text: 'Rest API', link: '/rest-api' },
       { text: 'Web Socket Streams', link: '/web-socket-streams' },
       { text: 'User Data Stream', link: '/user-data-stream' },
       { text: 'Errors', link: '/errors' }
@@ -30,7 +30,7 @@ export default defineUserConfig({
       {
         text: 'API Documentation',
         children: [
-          '/',
+          '/rest-api',
           '/web-socket-streams',
           '/user-data-stream',
           '/errors'

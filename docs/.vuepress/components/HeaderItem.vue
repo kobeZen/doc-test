@@ -8,7 +8,7 @@
         :class="{ 'expanded': isExpanded }"
         @click="handleToggle"
       >
-        <svg class="expand-icon" viewBox="0 0 24 24" width="16" height="16">
+        <svg class="expand-icon" viewBox="0 0 24 24" width="20" height="20">
           <path fill="currentColor" d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/>
         </svg>
       </button>
@@ -75,37 +75,37 @@ const handleToggle = () => {
   position: relative;
   
   &.level-1 {
-    --indent: 0;
+    --indent: 0rem;
     --text-size: 0.95rem;
     --text-weight: 600;
   }
   
   &.level-2 {
-    --indent: 1rem;
+    --indent: 0.7rem;
     --text-size: 0.9rem;
     --text-weight: 500;
   }
   
   &.level-3 {
-    --indent: 2rem;
+    --indent: 1.3rem;
     --text-size: 0.85rem;
     --text-weight: 500;
   }
   
   &.level-4 {
-    --indent: 3rem;
+    --indent: 2rem;
     --text-size: 0.8rem;
     --text-weight: 400;
   }
   
   &.level-5 {
-    --indent: 4rem;
+    --indent: 3rem;
     --text-size: 0.8rem;
     --text-weight: 400;
   }
   
   &.level-6 {
-    --indent: 5rem;
+    --indent: 4rem;
     --text-size: 0.75rem;
     --text-weight: 400;
   }
@@ -113,12 +113,13 @@ const handleToggle = () => {
 
 .header-content {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   margin-left: var(--indent);
-  padding: 0.4rem 0.8rem;
+  padding: 0;
   border-radius: 6px;
   transition: all 0.2s ease;
   position: relative;
+  min-height: 1.5rem;
   
   &:hover {
     background-color: rgba(25, 118, 210, 0.05);
@@ -129,12 +130,13 @@ const handleToggle = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   margin-right: 0.5rem;
+  margin-top: 0.15rem;
   background: none;
   border: none;
-  border-radius: 3px;
+  border-radius: 4px;
   cursor: pointer;
   color: #6c757d;
   transition: all 0.2s ease;
@@ -153,9 +155,10 @@ const handleToggle = () => {
 }
 
 .expand-placeholder {
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   margin-right: 0.5rem;
+  margin-top: 0.25rem;
   flex-shrink: 0;
 }
 
@@ -165,8 +168,7 @@ const handleToggle = () => {
 
 .header-link {
   flex: 1;
-  display: flex;
-  align-items: center;
+  display: block;
   color: #495057;
   text-decoration: none;
   font-size: var(--text-size);
@@ -174,6 +176,7 @@ const handleToggle = () => {
   line-height: 1.4;
   transition: all 0.2s ease;
   padding: 0.25rem 0;
+  width: 100%;
   
   &:hover {
     color: #1976d2;
@@ -199,9 +202,12 @@ const handleToggle = () => {
 }
 
 .header-text {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  word-wrap: break-word;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  line-height: 1.4;
+  display: block;
+  width: 100%;
 }
 
 .children-list {

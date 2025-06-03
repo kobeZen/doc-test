@@ -36,32 +36,45 @@
             <span class="navbar-title">Coins APIs</span>
           </div>
 
-          <!-- 右侧导航和操作区域 -->
-          <div class="navbar-right">
-            <!-- 导航链接 -->
-            <nav class="navbar-nav">
-              <router-link 
-                v-for="item in navItems" 
-                :key="item.link"
-                :to="item.link" 
-                class="nav-link"
-                :class="{ 'is-active': isActiveNavItem(item.link) }"
-              >
-                {{ item.text }}
-              </router-link>
-            </nav>
+          <!-- 中间导航链接 -->
+          <nav class="navbar-nav">
+            <router-link 
+              v-for="item in navItems" 
+              :key="item.link"
+              :to="item.link" 
+              class="nav-link"
+              :class="{ 'is-active': isActiveNavItem(item.link) }"
+            >
+              {{ item.text }}
+            </router-link>
+          </nav>
 
-            <!-- 主题切换和其他操作 -->
-            <div class="navbar-actions">
-              <button 
-                class="theme-toggle"
-                @click="toggleTheme"
-                :title="isDark ? '切换到浅色主题' : '切换到深色主题'"
-              >
-                <span class="theme-icon">{{ isDark ? '☀️' : '🌙' }}</span>
-              </button>
-            </div>
+          <!-- 右侧操作区域 -->
+          <div class="navbar-actions">
+            <button 
+              class="theme-toggle"
+              @click="toggleTheme"
+              :title="isDark ? '切换到浅色主题' : '切换到深色主题'"
+            >
+              <span class="theme-icon">{{ isDark ? '☀️' : '🌙' }}</span>
+            </button>
           </div>
+        </div>
+        
+        <!-- 移动端导航菜单 -->
+        <div class="mobile-nav" :class="{ 'show': isSidebarOpen }">
+          <nav class="mobile-nav-list">
+            <router-link 
+              v-for="item in navItems" 
+              :key="item.link"
+              :to="item.link" 
+              class="mobile-nav-link"
+              :class="{ 'is-active': isActiveNavItem(item.link) }"
+              @click="toggleSidebar"
+            >
+              {{ item.text }}
+            </router-link>
+          </nav>
         </div>
       </header>
 
@@ -135,9 +148,9 @@ const isSidebarOpen = ref(false)
 const isDark = ref(false)
 
 const navItems = [
-  { text: 'Rest-Api', link: '/' },
-  { text: 'Web-Socket-Streams', link: '/web-socket-streams' },
-  { text: 'User-Data-Stream', link: '/user-data-stream' },
+  { text: 'Rest API', link: '/rest-api' },
+  { text: 'Web Socket Streams', link: '/web-socket-streams' },
+  { text: 'User Data Stream', link: '/user-data-stream' },
   { text: 'Errors', link: '/errors' }
 ]
 
@@ -275,9 +288,17 @@ onUnmounted(() => {
     justify-content: space-between;
     padding: 0 2rem;
     height: 60px;
-    // max-width: 1200px;
     margin: 0 auto;
     width: 100%;
+    max-width: 1920px;
+    
+    @media (min-width: 1200px) {
+      padding: 0 3rem;
+    }
+    
+    @media (max-width: 768px) {
+      padding: 0 1rem;
+    }
   }
   
   .sidebar-toggle {
@@ -317,6 +338,7 @@ onUnmounted(() => {
   .navbar-brand {
     display: flex;
     align-items: center;
+    flex-shrink: 0;
     
     .navbar-logo {
       width: 32px;
@@ -328,21 +350,22 @@ onUnmounted(() => {
       font-size: 1.2rem;
       font-weight: 600;
       color: var(--c-brand);
-    }
-  }
-  
-  .navbar-right {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    
-    @media (max-width: 768px) {
-      display: none;
+      
+      @media (max-width: 480px) {
+        font-size: 1rem;
+      }
     }
   }
   
   .navbar-nav {
     display: flex;
+    justify-content: center;
+    flex: 1;
+    margin: 0 2rem;
+    
+    @media (max-width: 1024px) {
+      margin: 0 1rem;
+    }
     
     @media (max-width: 768px) {
       display: none;
@@ -352,10 +375,23 @@ onUnmounted(() => {
       color: var(--c-text);
       text-decoration: none;
       font-weight: 500;
-      padding: 0.75rem 1rem;
+      padding: 0.75rem;
       position: relative;
       transition: all 0.3s ease;
       border-radius: 4px;
+      margin: 0 0.25rem;
+      white-space: nowrap;
+      
+      @media (min-width: 1200px) {
+        padding: 0.75rem 1.25rem;
+        margin: 0 0.5rem;
+        font-size: 1rem;
+      }
+      
+      @media (min-width: 1600px) {
+        padding: 0.75rem 1.5rem;
+        margin: 0 0.75rem;
+      }
       
       &:hover {
         color: var(--c-brand);
@@ -372,12 +408,22 @@ onUnmounted(() => {
           content: '';
           position: absolute;
           bottom: 4px;
-          left: 1rem;
-          right: 1rem;
+          left: 0.75rem;
+          right: 0.75rem;
           height: 3px;
           background: linear-gradient(90deg, var(--c-brand) 0%, #42a5f5 100%);
           border-radius: 2px;
           animation: slideIn 0.3s ease-out;
+          
+          @media (min-width: 1200px) {
+            left: 1.25rem;
+            right: 1.25rem;
+          }
+          
+          @media (min-width: 1600px) {
+            left: 1.5rem;
+            right: 1.5rem;
+          }
         }
         
         &:hover {
@@ -400,6 +446,10 @@ onUnmounted(() => {
   }
   
   .navbar-actions {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    
     .theme-toggle {
       background: none;
       border: 1px solid var(--c-border);
@@ -407,6 +457,11 @@ onUnmounted(() => {
       padding: 0.5rem;
       cursor: pointer;
       transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 40px;
+      height: 40px;
       
       &:hover {
         background: var(--c-bg-light);
@@ -427,7 +482,13 @@ onUnmounted(() => {
     max-width: calc(100% - 280px);
     padding: 2rem;
     
+    @media (max-width: 1024px) {
+      padding: 1.5rem;
+    }
+    
     @media (max-width: 768px) {
+      margin-left: 0;
+      max-width: 100%;
       padding: 1rem;
     }
   }
@@ -593,6 +654,26 @@ onUnmounted(() => {
     }
   }
   
+  .mobile-nav {
+    background: var(--c-bg-light);
+    
+    .mobile-nav-link {
+      color: #e0e0e0;
+      
+      &:hover {
+        color: #74b9ff;
+        background-color: rgba(116, 185, 255, 0.08);
+        border-left-color: #74b9ff;
+      }
+      
+      &.is-active {
+        color: #74b9ff;
+        background-color: rgba(116, 185, 255, 0.12);
+        border-left-color: #74b9ff;
+      }
+    }
+  }
+  
   .nav-link-button:hover {
     .nav-direction {
       color: rgba(255, 255, 255, 0.8);
@@ -600,6 +681,52 @@ onUnmounted(() => {
     
     .nav-title {
       color: white;
+    }
+  }
+}
+
+// 移动端导航菜单
+.mobile-nav {
+  display: none;
+  background: white;
+  border-top: 1px solid var(--c-border);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.3s ease;
+  
+  @media (max-width: 768px) {
+    display: block;
+  }
+  
+  &.show {
+    max-height: 300px;
+  }
+  
+  .mobile-nav-list {
+    padding: 1rem 0;
+    
+    .mobile-nav-link {
+      display: block;
+      color: var(--c-text);
+      text-decoration: none;
+      font-weight: 500;
+      padding: 0.75rem 2rem;
+      transition: all 0.3s ease;
+      border-left: 3px solid transparent;
+      
+      &:hover {
+        color: var(--c-brand);
+        background-color: rgba(25, 118, 210, 0.05);
+        border-left-color: var(--c-brand);
+      }
+      
+      &.is-active {
+        color: var(--c-brand);
+        font-weight: 700;
+        background-color: rgba(25, 118, 210, 0.08);
+        border-left-color: var(--c-brand);
+      }
     }
   }
 }
