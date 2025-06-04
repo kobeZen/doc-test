@@ -85,7 +85,7 @@
       <!-- 页面内容 -->
       <main class="page-content">
         <!-- 自定义侧边栏 -->
-        <CustomSidebar :class="{ 'open': isSidebarOpen }" :is-dark="isDark" />
+        <CustomSidebar :class="{ 'open': isSidebarOpen, 'mobile-hidden': true }" :is-dark="isDark" />
         <div class="content-wrapper">
           <!-- 面包屑导航 -->
           <nav class="breadcrumb" v-if="breadcrumbs.length > 1">
@@ -278,12 +278,20 @@ onUnmounted(() => {
   }
 }
 .navbar-container {
- 
   background: white;
   border-bottom: 1px solid var(--c-border);
   position: sticky;
   top: 0;
   z-index: 999;
+  width: 100%;
+  
+  // 在移动端使用 fixed 定位确保滚动时不移动
+  @media (max-width: 768px) {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+  }
 }
 .navbar {
   max-width: 1920px;
@@ -311,11 +319,16 @@ onUnmounted(() => {
   .sidebar-toggle {
     display: none;
     flex-direction: column;
+    justify-content: center;
+    align-items: center;
     background: none;
     border: none;
     cursor: pointer;
-    padding: 0.5rem;
+    padding: 0.75rem;
     margin-right: 1rem;
+    width: 44px;
+    height: 44px;
+    position: relative;
     
     @media (max-width: 768px) {
       display: flex;
@@ -326,18 +339,35 @@ onUnmounted(() => {
       height: 2px;
       background: var(--c-text);
       margin: 2px 0;
-      transition: all 0.3s ease;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      transform-origin: center;
+      position: absolute;
+      
+      &:nth-child(1) {
+        top: 16px;
+      }
+      
+      &:nth-child(2) {
+        top: 21px;
+      }
+      
+      &:nth-child(3) {
+        top: 26px;
+      }
     }
     
     &.active {
       .toggle-line:nth-child(1) {
-        transform: rotate(45deg) translate(5px, 5px);
+        transform: rotate(45deg);
+        top: 21px;
       }
       .toggle-line:nth-child(2) {
         opacity: 0;
+        transform: scale(0);
       }
       .toggle-line:nth-child(3) {
-        transform: rotate(-45deg) translate(7px, -6px);
+        transform: rotate(-45deg);
+        top: 21px;
       }
     }
   }
@@ -483,6 +513,11 @@ onUnmounted(() => {
 
 .page-content {
   flex: 1;
+  
+  // 在移动端添加顶部边距，避免被固定导航栏遮挡
+  @media (max-width: 768px) {
+    padding-top: 60px; // 导航栏高度
+  }
   
   .content-wrapper {
     margin-left: 280px;
@@ -639,6 +674,9 @@ onUnmounted(() => {
   .header-text {
     color: #fff!important;
   }
+  .navbar-container {
+    background: var(--c-bg-light);
+  }
   .navbar {
     background: var(--c-bg-light);
     
@@ -709,6 +747,11 @@ onUnmounted(() => {
   
   @media (max-width: 768px) {
     display: block;
+    position: fixed;
+    top: 60px; // 导航栏高度
+    left: 0;
+    right: 0;
+    z-index: 998; // 比导航栏稍低
   }
   
   &.show {
@@ -740,6 +783,13 @@ onUnmounted(() => {
         border-left-color: var(--c-brand);
       }
     }
+  }
+}
+
+// 移动端隐藏自定义侧边栏
+@media (max-width: 768px) {
+  .mobile-hidden {
+    display: none !important;
   }
 }
 </style> 
