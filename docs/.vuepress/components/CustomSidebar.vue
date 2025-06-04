@@ -804,7 +804,7 @@ const flattenHeaders = (headers) => {
 
 // 暗色主题
 .custom-sidebar.dark-theme {
-  background: linear-gradient(135deg, #1e1e1e 0%, #2a2a2a 100%);
+  background: #141414;
   border-right-color: #404040;
   
   .sidebar-header {
@@ -815,7 +815,9 @@ const flattenHeaders = (headers) => {
       color: #64b5f6;
     }
   }
-  
+  .header-link{
+    color: #fff!important;
+  }
   .search-section {
     border-bottom-color: #404040;
     

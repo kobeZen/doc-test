@@ -294,7 +294,7 @@ onUnmounted(() => {
   }
 }
 .navbar {
-  max-width: 1920px;
+  // max-width: 1920px;
   border-bottom: none;
   box-shadow: none;
   .navbar-content {
@@ -445,21 +445,21 @@ onUnmounted(() => {
           content: '';
           position: absolute;
           bottom: 4px;
-          left: 0.75rem;
-          right: 0.75rem;
+          left: 2.5rem;
+          right: 2.5rem;
           height: 3px;
           background: linear-gradient(90deg, var(--c-brand) 0%, #42a5f5 100%);
           border-radius: 2px;
           animation: slideIn 0.3s ease-out;
           
           @media (min-width: 1200px) {
-            left: 1.25rem;
-            right: 1.25rem;
+            left: 2.5rem;
+            right: 2.5rem;
           }
           
           @media (min-width: 1600px) {
-            left: 1.5rem;
-            right: 1.5rem;
+            left: 2.85rem;
+            right: 2.85rem;
           }
         }
         
@@ -521,9 +521,12 @@ onUnmounted(() => {
   
   .content-wrapper {
     margin-left: 280px;
-    max-width: calc(1920px - 280px);
+    max-width: calc(100% - 280px);
     padding: 2rem;
-    
+    .page-main{
+      margin: 0 auto;
+      max-width: 1920px;
+    }
     @media (max-width: 1024px) {
       padding: 1.5rem;
     }
@@ -688,11 +691,11 @@ onUnmounted(() => {
         }
         
         &.is-active {
-          color: #74b9ff;
+          color: #FAFAFA;
           font-weight: 700;
           
           &::after {
-            background: linear-gradient(90deg, #74b9ff 0%, #0984e3 100%);
+            background: #FAFAFA;
           }
           
           &:hover {

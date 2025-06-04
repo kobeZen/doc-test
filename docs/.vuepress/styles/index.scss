@@ -62,13 +62,20 @@
     border-bottom: 1px solid var(--c-border);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
   }
-  
+  .header-text {
+    color: #88888F!important;
+    
+  }
+  .header-link.active .header-text{
+    color: #fff!important;
+  }
   // 深色模式下的侧边栏
   .sidebar {
     background: linear-gradient(180deg, rgba(47, 47, 64, 0.95) 0%, rgba(52, 52, 72, 0.95) 100%);
     backdrop-filter: blur(12px);
     border-right: 1px solid var(--c-border);
     box-shadow: 2px 0 20px rgba(0, 0, 0, 0.3);
+   
   }
   
   // 深色模式下的内容区域背景
@@ -86,12 +93,19 @@
   .page-content {
     background: transparent !important;
   }
-  
+  .nav-link {
+    color: #88888F!important;
+  }
+  .nav-link.is-active {
+    color: #FAFAFA!important;
+  }
   // 确保整个内容包装器是透明
   .content-wrapper {
-    background: transparent !important;
+    background: #000 !important;
   }
-  
+  .navbar-content {
+    background: #000 !important;
+  }
   // 特别针对内容区域的强制覆盖
   .theme-default-content,
   .theme-default-content div,

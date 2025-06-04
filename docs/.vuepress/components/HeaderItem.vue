@@ -256,7 +256,7 @@ const handleToggle = () => {
     }
     
     &.active {
-      color: #64b5f6;
+      color: #fff;
       
       &::before {
         background: linear-gradient(to bottom, #64b5f6, #42a5f5);
