@@ -438,29 +438,18 @@ onUnmounted(() => {
       &.is-active {
         color: var(--c-brand);
         font-weight: 700;
-        // background-color: rgba(25, 118, 210, 0.08);
-        
         /* 下划线效果 */
         &::after {
           content: '';
           position: absolute;
           bottom: 4px;
-          left: 2.5rem;
-          right: 2.5rem;
+          left: 50%;
+          width: 24px;
           height: 3px;
           background: linear-gradient(90deg, var(--c-brand) 0%, #42a5f5 100%);
           border-radius: 2px;
           animation: slideIn 0.3s ease-out;
-          
-          @media (min-width: 1200px) {
-            left: 2.5rem;
-            right: 2.5rem;
-          }
-          
-          @media (min-width: 1600px) {
-            left: 2.85rem;
-            right: 2.85rem;
-          }
+          transform: translateX(-50%);
         }
         
         &:hover {
@@ -473,11 +462,11 @@ onUnmounted(() => {
   
   @keyframes slideIn {
     from {
-      transform: scaleX(0);
+      transform: translateX(-50%) scaleX(0);
       opacity: 0;
     }
     to {
-      transform: scaleX(1);
+      transform: translateX(-50%) scaleX(1);
       opacity: 1;
     }
   }
