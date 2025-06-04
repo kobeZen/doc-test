@@ -1,5 +1,6 @@
 ---
 title: "Errors"
+
 ---
 # Error codes for Coins (2024-04-30)
 

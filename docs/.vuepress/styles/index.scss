@@ -93,11 +93,12 @@
   .page-content {
     background: transparent !important;
   }
-  .nav-link {
-    color: #88888F!important;
-  }
+  
   .nav-link.is-active {
     color: #FAFAFA!important;
+  }
+  .nav-link {
+    color: #88888F!important;
   }
   // 确保整个内容包装器是透明
   .content-wrapper {
