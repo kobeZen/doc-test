@@ -203,9 +203,9 @@ const scrollToHeader = (slug) => {
     const navbar = document.querySelector('.navbar')
     const navbarHeight = navbar ? navbar.offsetHeight : 60
     
-    // 计算滚动位置，留出导航栏高度的空间
+    // 计算滚动位置，留出导航栏高度的空间，然后再往下滚动60px
     const elementTop = element.getBoundingClientRect().top + window.pageYOffset
-    const scrollToPosition = elementTop - navbarHeight - 20 // 额外留20px间距
+    const scrollToPosition = elementTop - navbarHeight + 60 // 往下额外滚动60px
     
     window.scrollTo({
       top: scrollToPosition,
@@ -369,7 +369,17 @@ const scrollToResult = (result) => {
     // 临时禁用 Intersection Observer 的自动更新
     isScrollingToHeader.value = true
     
-    result.element.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    // 使用与左侧菜单一致的滚动逻辑
+    const navbar = document.querySelector('.navbar')
+    const navbarHeight = navbar ? navbar.offsetHeight : 60
+    const elementTop = result.element.getBoundingClientRect().top + window.pageYOffset
+    const scrollToPosition = elementTop - navbarHeight + 60 // 往下额外滚动60px
+    
+    window.scrollTo({
+      top: scrollToPosition,
+      behavior: 'smooth'
+    })
+    
     // 高亮元素
     result.element.style.backgroundColor = '#fff3cd'
     setTimeout(() => {
@@ -755,7 +765,7 @@ const flattenHeaders = (headers) => {
 .nav-list {
   list-style: none;
   margin: 0;
-  padding: 0;
+  padding: 0 10px 0 0;
 }
 
 .nav-sublist {

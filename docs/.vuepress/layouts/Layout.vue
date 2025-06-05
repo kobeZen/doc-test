@@ -231,11 +231,45 @@ onMounted(() => {
   console.log('Current route:', route.path)
   console.log('Nav items:', navItems)
   
+  // 处理页面内的锚点链接
+  const handleAnchorClick = (e) => {
+    const link = e.target.closest('a[href^="#"]')
+    if (link) {
+      e.preventDefault()
+      const hash = link.getAttribute('href')
+      const targetId = hash.substring(1)
+      const targetElement = document.getElementById(targetId)
+      
+      if (targetElement) {
+        const navbar = document.querySelector('.navbar')
+        const navbarHeight = navbar ? navbar.offsetHeight : 60
+        const elementTop = targetElement.getBoundingClientRect().top + window.pageYOffset
+        const scrollToPosition = elementTop - navbarHeight + 60 // 往下额外滚动60px
+        
+        window.scrollTo({
+          top: scrollToPosition,
+          behavior: 'smooth'
+        })
+        
+        // 更新URL hash
+        window.history.replaceState(null, null, hash)
+      }
+    }
+  }
+  
+  document.addEventListener('click', handleAnchorClick)
   window.addEventListener('resize', handleResize)
+  
+  // 清理函数将在onUnmounted中处理
+  window._handleAnchorClick = handleAnchorClick
 })
 
 onUnmounted(() => {
   window.removeEventListener('resize', handleResize)
+  if (window._handleAnchorClick) {
+    document.removeEventListener('click', window._handleAnchorClick)
+    delete window._handleAnchorClick
+  }
 })
 </script>
 
@@ -280,7 +314,7 @@ onUnmounted(() => {
 .navbar-container {
   background: white;
   border-bottom: 1px solid var(--c-border);
-  position: sticky;
+  position: fixed;
   top: 0;
   z-index: 999;
   width: 100%;

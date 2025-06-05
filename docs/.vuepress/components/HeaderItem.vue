@@ -132,7 +132,7 @@ const handleToggle = () => {
   justify-content: center;
   width: 30px;
   height: 30px;
-  margin-right: 0.5rem;
+  margin-right: 0;
   margin-top: -1px;
   background: none;
   border: none;
