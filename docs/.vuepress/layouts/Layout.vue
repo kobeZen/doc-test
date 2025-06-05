@@ -465,12 +465,12 @@ onUnmounted(() => {
       }
       
       &:hover {
-        color: var(--c-brand);
-        background-color: rgba(25, 118, 210, 0.05);
+        color: #131B26;
+        background-color: #FAFAFA;
       }
       
       &.is-active {
-        color: var(--c-brand);
+        color: #131B26;
         font-weight: 700;
         /* 下划线效果 */
         &::after {
@@ -480,15 +480,15 @@ onUnmounted(() => {
           left: 50%;
           width: 24px;
           height: 3px;
-          background: linear-gradient(90deg, var(--c-brand) 0%, #42a5f5 100%);
+          background: #131B26;
           border-radius: 2px;
           animation: slideIn 0.3s ease-out;
           transform: translateX(-50%);
         }
         
         &:hover {
-          color: #1565c0;
-          background-color: rgba(25, 118, 210, 0.12);
+          color: #131B26;
+          background-color: #FAFAFA;
         }
       }
     }

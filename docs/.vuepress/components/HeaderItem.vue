@@ -179,11 +179,11 @@ const handleToggle = () => {
   width: 100%;
   
   &:hover {
-    color: #1976d2;
+    color: #131B26;
   }
   
   &.active {
-    color: #1976d2;
+    color: #131B26;
     font-weight: 600;
     position: relative;
     
