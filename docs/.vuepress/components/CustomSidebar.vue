@@ -13,6 +13,7 @@
             class="search-input"
             @input="handleSearch"
             @keydown.enter="performSearch"
+            @focus="handleSearchFocus"
           >
           <button class="search-button" @click="performSearch">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -21,19 +22,27 @@
             </svg>
           </button>
         </div>
-        <div v-if="searchResults.length > 0" class="search-results">
+        <div v-if="(searchResults.length > 0 || (searchQuery && searchResults.length === 0)) && showSearchResults" class="search-results">
           <div 
+            v-if="searchResults.length > 0"
             v-for="result in searchResults" 
             :key="result.id"
             class="search-result-item"
             @click="scrollToResult(result)"
           >
-            <div class="result-title">{{ result.title }}</div>
-            <div class="result-preview">{{ result.preview }}</div>
+            <div class="result-left">
+              <div class="result-icon">{{ getPageIcon(result.path.split('#')[0]) }}</div>
+              <div class="result-info">
+                <div class="result-page">{{ result.pageName }}</div>
+                <div class="result-title">{{ result.title }}</div>
+                <div class="result-path">{{ result.path }}</div>
+              </div>
+            </div>
+            <div class="result-preview" v-html="result.preview"></div>
           </div>
-        </div>
-        <div v-if="searchQuery && searchResults.length === 0" class="no-results">
-          No relevant content found
+          <div v-if="searchQuery && searchResults.length === 0" class="no-results">
+            No relevant content found
+          </div>
         </div>
       </div>
       
@@ -82,6 +91,8 @@ const pageData = usePageData()
 const activeHeaderSlug = ref('')
 const searchQuery = ref('')
 const searchResults = ref([])
+const showSearchResults = ref(false) // 控制搜索结果框的显示
+const isSearching = ref(false) // 搜索状态
 const expandedHeaders = ref(new Set()) // 管理展开的标题
 const isScrollingToHeader = ref(false) // 控制是否正在滚动到指定标题
 
@@ -95,10 +106,11 @@ const pageTitleMap = {
 
 // 页面图标映射
 const pageIconMap = {
-  '/': 'icon-home',
-  '/web-socket-streams': 'icon-websocket',
-  '/user-data-stream': 'icon-user',
-  '/errors': 'icon-error'
+  '/': '🏠',
+  '/rest-api': '📡',
+  '/web-socket-streams': '🔗',
+  '/user-data-stream': '👤',
+  '/errors': '⚠️'
 }
 
 // 标题级别图标映射
@@ -154,24 +166,38 @@ const sidebarPages = computed(() => {
 
 // 获取页面标题
 const getPageTitle = (path) => {
+  // 首先检查预定义的标题映射
+  if (pageTitleMap[path]) {
+    return pageTitleMap[path]
+  }
+  
   try {
     const pages = router.getRoutes()
     const page = pages.find(p => p.path === path)
     
-    if (page && page.meta?.title) {
-      return page.meta.title
+    // 尝试多种方式获取页面标题
+    if (page) {
+      if (page.meta?.title) {
+        return page.meta.title
+      }
+      if (page.name) {
+        return page.name
+      }
     }
   } catch (error) {
     console.warn('Error getting page title:', error)
   }
   
+  // 从路径生成标题
   if (path === '/') return '首页'
-  return path.split('/').pop().replace(/[-_]/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
+  const pathParts = path.split('/').filter(Boolean)
+  const lastPart = pathParts[pathParts.length - 1] || 'page'
+  return lastPart.replace(/[-_]/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
 }
 
 // 获取页面图标
 const getPageIcon = (link) => {
-  return pageIconMap[link] || 'icon-page'
+  return pageIconMap[link] || '📄'
 }
 
 // 获取标题图标
@@ -280,79 +306,293 @@ const isHeaderExpanded = (slug) => {
   return expandedHeaders.value.has(slug)
 }
 
-// 搜索页面内容
-const handleSearch = () => {
-  if (!searchQuery.value.trim()) {
-    searchResults.value = []
-    return
+// 搜索当前页面内容
+const searchCurrentPage = async (query, results, seenResults) => {
+  const pageInfo = {
+    path: route.path,
+    name: currentPageTitle.value,
+    icon: getPageIcon(route.path)
   }
   
-  performSearch()
+  // 1. 搜索页面标题
+  const allHeaders = document.querySelectorAll('h1, h2, h3, h4, h5, h6')
+  
+  allHeaders.forEach((header, headerIndex) => {
+    const headerText = header.textContent.toLowerCase()
+    
+    // 简单的完整字符串匹配（不区分大小写）
+    const headerMatches = headerText.includes(query.toLowerCase())
+    
+    if (headerMatches) {
+      const title = header.textContent.trim()
+      const headerSlug = header.id || generateId()
+      const resultKey = `${pageInfo.path}#${headerSlug}`
+      
+      if (!seenResults.has(resultKey)) {
+        seenResults.add(resultKey)
+        
+        // 计算匹配分数
+        let score = 90
+        if (headerText === query.toLowerCase()) {
+          score = 100 // 完全匹配
+        } else if (headerText.startsWith(query.toLowerCase())) {
+          score = 95 // 开头匹配
+        }
+        
+        results.push({
+          id: `header-${headerSlug}-${headerIndex}`, // 添加header前缀和索引确保唯一性
+          title: title,
+          pageName: pageInfo.name,
+          path: `${pageInfo.path}#${headerSlug}`,
+          preview: getTextPreview(header.textContent, query),
+          element: header,
+          score: score
+        })
+      }
+    }
+  })
+  
+  // 2. 搜索段落内容
+  const paragraphs = document.querySelectorAll('p, li, td, div, span, code, pre')
+  paragraphs.forEach((paragraph, paragraphIndex) => {
+    const text = paragraph.textContent
+    
+    // 简单的完整字符串匹配（不区分大小写）
+    const contentMatches = text && text.toLowerCase().includes(query.toLowerCase())
+    
+    if (contentMatches) {
+      // 跳过不相关的元素
+      if (paragraph.closest('.search-section') || 
+          paragraph.closest('.navbar') || 
+          paragraph.closest('.sidebar') ||
+          paragraph.closest('.custom-sidebar') ||
+          paragraph.closest('script') ||
+          paragraph.closest('style') ||
+          text.trim().length < 10) return // 最小文本长度要求
+      
+      // 找到最近的标题
+      let nearestHeader = null
+      let currentElement = paragraph
+      
+      // 向上查找最近的标题
+      while (currentElement && currentElement.parentElement) {
+        // 查找前面的兄弟元素中的标题
+        let sibling = currentElement.previousElementSibling
+        while (sibling) {
+          if (sibling.matches && sibling.matches('h1, h2, h3, h4, h5, h6')) {
+            nearestHeader = sibling
+            break
+          }
+          sibling = sibling.previousElementSibling
+        }
+        
+        if (nearestHeader) break
+        currentElement = currentElement.parentElement
+      }
+      
+      // 如果没找到，使用页面第一个标题
+      if (!nearestHeader) {
+        nearestHeader = document.querySelector('h1, h2')
+      }
+      
+      const title = nearestHeader ? nearestHeader.textContent.trim() : '页面内容'
+      const headerSlug = nearestHeader ? (nearestHeader.id || generateId()) : 'content'
+      const preview = getTextPreview(text, query)
+      const resultKey = `${pageInfo.path}#${headerSlug}-${preview.substring(0, 30)}`
+      
+      if (!seenResults.has(resultKey) && preview.length > 10) {
+        seenResults.add(resultKey)
+        
+        // 计算匹配分数
+        let score = 70
+        const lowerText = text.toLowerCase()
+        const lowerQuery = query.toLowerCase()
+        
+        if (lowerText.startsWith(lowerQuery)) {
+          score = 80 // 开头匹配
+        }
+        
+        results.push({
+          id: `content-${headerSlug}-${paragraphIndex}`, // 添加content前缀和索引确保唯一性
+          title: title,
+          pageName: pageInfo.name,
+          path: `${pageInfo.path}#${headerSlug}`,
+          preview: preview,
+          element: nearestHeader || paragraph,
+          score: score
+        })
+      }
+    }
+  })
 }
 
-const performSearch = () => {
+// 搜索其他页面
+const performSearch = async () => {
   const query = searchQuery.value.trim().toLowerCase()
   if (!query) {
     searchResults.value = []
+    showSearchResults.value = false
+    isSearching.value = false
     return
   }
   
   const results = []
-  const contentElement = document.querySelector('.page-content')
+  const seenResults = new Set()
   
-  if (contentElement) {
-    // 搜索所有文本节点
-    const walker = document.createTreeWalker(
-      contentElement,
-      NodeFilter.SHOW_TEXT,
-      null,
-      false
-    )
-    
-    let node
-    while (node = walker.nextNode()) {
-      const text = node.textContent
-      if (text && text.toLowerCase().includes(query)) {
-        const parent = node.parentElement
-        if (parent && !parent.closest('.search-section')) {
-          // 获取包含该文本的标题
-          const header = parent.closest('h1, h2, h3, h4, h5, h6') || 
-                        parent.querySelector('h1, h2, h3, h4, h5, h6') ||
-                        contentElement.querySelector('h1, h2, h3, h4, h5, h6')
-          
-          const title = header ? header.textContent : '页面内容'
-          const preview = getTextPreview(text, query)
-          const id = header ? header.id || generateId() : generateId()
-          
-          // 避免重复结果
-          if (!results.find(r => r.title === title && r.preview === preview)) {
-            results.push({
-              id,
-              title,
-              preview,
-              element: header || parent
-            })
-          }
-        }
-      }
-    }
+  // 使用预定义的页面列表而不是动态路由
+  const predefinedPages = [
+    { path: '/', title: '首页' },
+    { path: '/rest-api', title: 'Rest API' },
+    { path: '/web-socket-streams', title: 'Web Socket Streams' },
+    { path: '/user-data-stream', title: 'User Data Stream' },
+    { path: '/errors', title: 'Errors' }
+  ]
+  
+  // 过滤掉当前页面
+  const otherPages = predefinedPages.filter(page => page.path !== route.path)
+  
+  console.log('Predefined pages:', predefinedPages)
+  console.log('Other pages to search:', otherPages)
+  console.log('Current route:', route.path)
+  
+  // 添加当前页面搜索
+  await searchCurrentPage(query, results, seenResults)
+  console.log('After current page search:', results.length)
+  
+  // 搜索其他页面（使用预定义列表）
+  await searchOtherPagesFromList(query, results, seenResults, otherPages)
+  console.log('After other pages search:', results.length)
+  
+  // 按相关性排序
+  results.sort((a, b) => (b.score || 0) - (a.score || 0))
+  
+  // 不过滤评分，显示所有匹配结果
+  const filteredResults = results
+  
+  if (filteredResults.length > 0) {
+    searchResults.value = filteredResults.slice(0, 50) // 增加到50个结果
+  } else {
+    searchResults.value = [] // 没有结果时清空之前的记录
   }
   
-  searchResults.value = results.slice(0, 10) // 限制结果数量
+  showSearchResults.value = true // 始终显示搜索结果框（包括无结果时）
+  isSearching.value = false // 搜索完成
+}
+
+// 新的搜索其他页面函数，使用预定义列表
+const searchOtherPagesFromList = async (query, results, seenResults, pageList) => {
+  console.log('searchOtherPagesFromList called with:', { query, pageListLength: pageList.length })
+  
+  pageList.forEach(pageItem => {
+    const path = pageItem.path
+    const pageName = pageItem.title
+    
+    console.log(`Checking page: ${path}, pageName: ${pageName}`)
+    
+    // 搜索页面标题 - 简单的完整字符串匹配（不区分大小写）
+    const titleMatches = pageName.toLowerCase().includes(query.toLowerCase())
+    
+    console.log(`Title match for "${pageName}": ${titleMatches}`)
+    
+    if (titleMatches) {
+      const resultKey = `${path}-title`
+      if (!seenResults.has(resultKey)) {
+        seenResults.add(resultKey)
+        
+        // 计算匹配分数
+        let score = 85
+        if (pageName.toLowerCase() === query.toLowerCase()) {
+          score = 95 // 完全匹配
+        } else if (pageName.toLowerCase().startsWith(query.toLowerCase())) {
+          score = 90 // 开头匹配
+        }
+        
+        console.log(`Adding title result for ${path}: ${pageName}`)
+        
+        results.push({
+          id: `page-${path.replace(/\//g, '-')}`,
+          title: pageName,
+          pageName: pageName,
+          path: path,
+          preview: `Page: ${pageName}`,
+          element: null,
+          score: score
+        })
+      }
+    }
+    
+    // 搜索页面路径 - 简单的完整字符串匹配（不区分大小写）
+    const pathMatches = path.toLowerCase().includes(query.toLowerCase())
+    
+    console.log(`Path match for "${path}": ${pathMatches}`)
+    
+    if (pathMatches) {
+      const resultKey = `${path}-path`
+      if (!seenResults.has(resultKey)) {
+        seenResults.add(resultKey)
+        
+        console.log(`Adding path result for ${path}`)
+        
+        results.push({
+          id: `path-${path.replace(/\//g, '-')}`,
+          title: pageName,
+          pageName: pageName,
+          path: path,
+          preview: `Path: ${path}`,
+          element: null,
+          score: 75
+        })
+      }
+    }
+  })
+  
+  console.log('searchOtherPagesFromList results:', results.length)
+}
+
+// 搜索页面内容
+let searchTimeout = null
+const handleSearch = () => {
+  // 清除之前的搜索定时器
+  if (searchTimeout) {
+    clearTimeout(searchTimeout)
+  }
+  
+  if (!searchQuery.value.trim()) {
+    searchResults.value = []
+    showSearchResults.value = false
+    return
+  }
+  
+  // 立即清除旧结果，避免显示不匹配的内容
+  // searchResults.value = []
+  showSearchResults.value = true
+  isSearching.value = true
+  
+  // 防抖：300ms后执行搜索
+  searchTimeout = setTimeout(() => {
+    performSearch()
+  }, 300)
 }
 
 // 获取文本预览
 const getTextPreview = (text, query) => {
-  const queryIndex = text.toLowerCase().indexOf(query.toLowerCase())
-  const start = Math.max(0, queryIndex - 30)
-  const end = Math.min(text.length, queryIndex + query.length + 30)
-  let preview = text.substring(start, end)
+  // 清理文本，移除多余的空白字符
+  const cleanText = text.replace(/\s+/g, ' ').trim()
+  
+  // 找到查询字符串的位置
+  const queryIndex = cleanText.toLowerCase().indexOf(query.toLowerCase())
+  
+  if (queryIndex === -1) return cleanText.substring(0, 100) + '...'
+  
+  const start = Math.max(0, queryIndex - 40)
+  const end = Math.min(cleanText.length, queryIndex + query.length + 40)
+  let preview = cleanText.substring(start, end)
   
   if (start > 0) preview = '...' + preview
-  if (end < text.length) preview = preview + '...'
+  if (end < cleanText.length) preview = preview + '...'
   
-  // 高亮搜索词
-  const regex = new RegExp(`(${query})`, 'gi')
+  // 高亮查询字符串（完整匹配）
+  const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi')
   preview = preview.replace(regex, '<mark>$1</mark>')
   
   return preview
@@ -365,35 +605,47 @@ const generateId = () => {
 
 // 滚动到搜索结果
 const scrollToResult = (result) => {
-  if (result.element) {
-    // 临时禁用 Intersection Observer 的自动更新
-    isScrollingToHeader.value = true
-    
-    // 使用与左侧菜单一致的滚动逻辑
-    const navbar = document.querySelector('.navbar')
-    const navbarHeight = navbar ? navbar.offsetHeight : 60
-    const elementTop = result.element.getBoundingClientRect().top + window.pageYOffset
-    const scrollToPosition = elementTop - navbarHeight + 60 // 往下额外滚动60px
-    
-    window.scrollTo({
-      top: scrollToPosition,
-      behavior: 'smooth'
-    })
-    
-    // 高亮元素
-    result.element.style.backgroundColor = '#fff3cd'
-    setTimeout(() => {
-      result.element.style.backgroundColor = ''
-    }, 2000)
-    
-    // 清空搜索结果
-    searchQuery.value = ''
-    searchResults.value = []
-    
-    // 重新启用 Intersection Observer
-    setTimeout(() => {
-      isScrollingToHeader.value = false
-    }, 1000)
+  const targetPath = result.path.split('#')[0]
+  const hash = result.path.includes('#') ? result.path.split('#')[1] : ''
+  
+  // 隐藏搜索结果框
+  showSearchResults.value = false
+  
+  if (targetPath === route.path) {
+    // 当前页面，直接滚动
+    if (result.element) {
+      // 临时禁用 Intersection Observer 的自动更新
+      isScrollingToHeader.value = true
+      
+      // 使用与左侧菜单一致的滚动逻辑
+      const navbar = document.querySelector('.navbar')
+      const navbarHeight = navbar ? navbar.offsetHeight : 60
+      const elementTop = result.element.getBoundingClientRect().top + window.pageYOffset
+      const scrollToPosition = elementTop - navbarHeight + 60 // 往下额外滚动60px
+      
+      window.scrollTo({
+        top: scrollToPosition,
+        behavior: 'smooth'
+      })
+      
+      // 高亮元素
+      result.element.style.backgroundColor = '#fff3cd'
+      setTimeout(() => {
+        result.element.style.backgroundColor = ''
+      }, 2000)
+      
+      // 重新启用 Intersection Observer
+      setTimeout(() => {
+        isScrollingToHeader.value = false
+      }, 1000)
+    }
+  } else {
+    // 跨页面导航
+    if (hash) {
+      router.push(result.path)
+    } else {
+      router.push(targetPath)
+    }
   }
 }
 
@@ -459,12 +711,33 @@ onMounted(() => {
   setTimeout(() => {
     initIntersectionObserver()
   }, 500)
+  
+  // 添加全局点击事件监听器
+  document.addEventListener('click', handleClickOutside)
 })
+
+// 处理点击外部区域
+const handleClickOutside = (event) => {
+  const searchSection = document.querySelector('.search-section')
+  if (searchSection && !searchSection.contains(event.target)) {
+    showSearchResults.value = false
+  }
+}
+
+// 处理搜索框获得焦点时显示结果
+const handleSearchFocus = () => {
+  if (searchResults.value.length > 0) {
+    showSearchResults.value = true
+  }
+}
 
 onUnmounted(() => {
   if (observer) {
     observer.disconnect()
   }
+  
+  // 移除全局点击事件监听器
+  document.removeEventListener('click', handleClickOutside)
 })
 
 // 监听页面数据变化，重新初始化observer
@@ -639,8 +912,22 @@ const flattenHeaders = (headers) => {
       font-size: 0.9rem;
       background: transparent;
       box-shadow: none;
+      
       &::placeholder {
         color: #6c757d;
+      }
+      
+      &::selection {
+        background: #1976d2 !important;
+        color: white !important;
+        text-shadow: none !important;
+        backdrop-filter: none !important;
+      }
+      
+      &::-moz-selection {
+        background: #1976d2 !important;
+        color: white !important;
+        text-shadow: none !important;
       }
     }
     
@@ -660,12 +947,17 @@ const flattenHeaders = (headers) => {
   }
   
   .search-results {
-    max-height: 300px;
+    position: fixed;
+    top: 140px;
+    left: 20px;
+    z-index: 1001;
+    max-height: 600px;
     overflow-y: auto;
-    margin-top: 0.5rem;
     border: 1px solid #dee2e6;
     border-radius: 6px;
     background: white;
+    width: 480px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     
     /* 自定义滚动条样式 */
     scrollbar-width: thin;
@@ -701,10 +993,13 @@ const flattenHeaders = (headers) => {
     }
     
     .search-result-item {
-      padding: 0.75rem;
-      border-bottom: 1px solid #f8f9fa;
+      display: flex;
+      padding: 1rem;
+      border-bottom: 1px solid #f0f0f0;
       cursor: pointer;
       transition: background-color 0.3s ease;
+      gap: 1rem;
+      align-items: flex-start;
       
       &:last-child {
         border-bottom: none;
@@ -714,36 +1009,83 @@ const flattenHeaders = (headers) => {
         background-color: #f8f9fa;
       }
       
+      .result-left {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+        flex: 1;
+        min-width: 200px;
+      }
+      
+      .result-icon {
+        font-size: 1.2rem;
+        color: #6c757d;
+        margin-top: 0.1rem;
+        flex-shrink: 0;
+      }
+      
+      .result-info {
+        flex: 1;
+        min-width: 0;
+      }
+      
+      .result-page {
+        font-size: 0.75rem;
+        color: #8e8e93;
+        margin-bottom: 0.3rem;
+        text-transform: uppercase;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+      }
+      
       .result-title {
         font-weight: 600;
         color: #1976d2;
-        font-size: 0.85rem;
-        margin-bottom: 0.25rem;
+        font-size: 0.9rem;
+        margin-bottom: 0.3rem;
+        line-height: 1.3;
+      }
+      
+      .result-path {
+        font-size: 0.7rem;
+        color: #a0a0a0;
+        font-family: monospace;
+        background: #f8f9fa;
+        padding: 0.2rem 0.4rem;
+        border-radius: 3px;
+        display: inline-block;
+        word-break: break-all;
       }
       
       .result-preview {
         font-size: 0.8rem;
         color: #6c757d;
         line-height: 1.4;
+        flex: 1;
+        min-width: 200px;
+        padding-left: 1rem;
+        border-left: 1px solid #e9ecef;
         
         :deep(mark) {
           background-color: #fff3cd;
           color: #856404;
-          padding: 0 2px;
-          border-radius: 2px;
+          padding: 0 3px;
+          border-radius: 3px;
+          font-weight: 500;
         }
       }
     }
   }
   
+  
   .no-results {
     text-align: center;
-    padding: 1rem;
+    padding: 2rem 1rem;
     color: #6c757d;
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     background: #f8f9fa;
-    border-radius: 6px;
-    margin-top: 0.5rem;
+    margin: 0;
+    border-top: 1px solid #f0f0f0;
   }
 }
 
@@ -845,6 +1187,19 @@ const flattenHeaders = (headers) => {
         &::placeholder {
           color: #a0a0a0;
         }
+        
+        &::selection {
+          background: #64b5f6 !important;
+          color: #000 !important;
+          text-shadow: none !important;
+          backdrop-filter: none !important;
+        }
+        
+        &::-moz-selection {
+          background: #64b5f6 !important;
+          color: #000 !important;
+          text-shadow: none !important;
+        }
       }
       
       .search-button {
@@ -881,12 +1236,22 @@ const flattenHeaders = (headers) => {
           background-color: #454545;
         }
         
+        .result-page {
+          color: #a0a0a0;
+        }
+        
         .result-title {
           color: #64b5f6;
         }
         
+        .result-path {
+          color: #808080;
+          background: #404040;
+        }
+        
         .result-preview {
           color: #b0b0b0;
+          border-left-color: #525252;
           
           :deep(mark) {
             background-color: #404040;
@@ -896,9 +1261,11 @@ const flattenHeaders = (headers) => {
       }
     }
     
+    
     .no-results {
       background: #3a3a3a;
       color: #a0a0a0;
+      border-top-color: #525252;
     }
   }
   
