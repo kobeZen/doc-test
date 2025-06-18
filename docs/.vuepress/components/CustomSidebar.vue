@@ -229,9 +229,9 @@ const scrollToHeader = (slug) => {
     const navbar = document.querySelector('.navbar')
     const navbarHeight = navbar ? navbar.offsetHeight : 60
     
-    // 计算滚动位置，留出导航栏高度的空间，然后再往下滚动60px
+    // 计算滚动位置，确保标题显示在导航栏下方，留出足够间距
     const elementTop = element.getBoundingClientRect().top + window.pageYOffset
-    const scrollToPosition = elementTop - navbarHeight + 60 // 往下额外滚动60px
+    const scrollToPosition = elementTop - navbarHeight - 20 // 标题距离导航栏20px
     
     window.scrollTo({
       top: scrollToPosition,
@@ -621,7 +621,7 @@ const scrollToResult = (result) => {
       const navbar = document.querySelector('.navbar')
       const navbarHeight = navbar ? navbar.offsetHeight : 60
       const elementTop = result.element.getBoundingClientRect().top + window.pageYOffset
-      const scrollToPosition = elementTop - navbarHeight + 60 // 往下额外滚动60px
+      const scrollToPosition = elementTop - navbarHeight - 20 // 标题距离导航栏20px
       
       window.scrollTo({
         top: scrollToPosition,
@@ -667,7 +667,7 @@ const initIntersectionObserver = () => {
   
   const options = {
     root: null,
-    rootMargin: `-${navbarHeight + 60}px 0px -80% 0px`,
+    rootMargin: `-${navbarHeight + 20}px 0px -80% 0px`,
     threshold: 0
   }
   
@@ -808,8 +808,8 @@ const flattenHeaders = (headers) => {
 .custom-sidebar {
   width: 280px;
   height: 100vh;
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-  border-right: 1px solid #dee2e6;
+  background: #ffffff;
+  border-right: 1px solid #f0f0f0;
   display: flex;
   flex-direction: column;
   position: fixed;
@@ -817,131 +817,105 @@ const flattenHeaders = (headers) => {
   top: 60px;
   padding-bottom: 60px;
   z-index: 100;
-  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
 }
 
 .sidebar-header {
-  padding: 1.5rem;
-  text-align: center;
-  border-bottom: 1px solid #dee2e6;
+  padding: 32px 24px 24px;
+  text-align: left;
+  border-bottom: 1px solid #f5f5f5;
   background: white;
   
   .sidebar-logo {
-    width: 48px;
-    height: 48px;
-    margin-bottom: 0.5rem;
+    width: 32px;
+    height: 32px;
+    margin-bottom: 12px;
   }
   
   .sidebar-title {
     margin: 0;
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #1976d2;
+    font-size: 18px;
+    font-weight: 500;
+    color: #1a1a1a;
+    letter-spacing: -0.01em;
   }
 }
 
 .sidebar-nav {
   flex: 1;
-  padding: 1rem 0;
+  padding: 24px 0;
   overflow-y: auto;
   
-  /* 自定义滚动条样式 */
-  scrollbar-width: thin;
-  scrollbar-color: transparent transparent;
-  transition: scrollbar-color 0.3s ease;
+  /* 隐藏滚动条 */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
   
   &::-webkit-scrollbar {
-    width: 6px;
-  }
-  
-  &::-webkit-scrollbar-track {
-    background: transparent;
-    border-radius: 3px;
-  }
-  
-
-  &::-webkit-scrollbar-thumb {
-    background: transparent;
-    border-radius: 3px;
-    transition: background 0.3s ease;
-  }
-  
-  /* 悬停时显示滚动条 */
-  &:hover {
-    scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
-    
-    &::-webkit-scrollbar-thumb {
-      background: rgba(0, 0, 0, 0.3);
-    }
-    
-    &::-webkit-scrollbar-thumb:hover {
-      background: rgba(0, 0, 0, 0.5);
-    }
-  }
-  
-  /* 滚动时显示滚动条 */
-  &::-webkit-scrollbar-thumb:active {
-    background: rgba(0, 0, 0, 0.6);
+    display: none;
   }
 }
 
 .search-section {
-  padding: 0 1rem 1rem 1rem;
-  border-bottom: 1px solid #dee2e6;
-  margin-bottom: 1rem;
+  padding: 0 24px 24px;
+  border-bottom: 1px solid #f5f5f5;
+  margin-bottom: 24px;
   
   .search-box {
     position: relative;
     display: flex;
     align-items: center;
-    background: white;
-    border: 1px solid #dee2e6;
+    background: #fafafa;
+    border: 1px solid transparent;
     border-radius: 8px;
     overflow: hidden;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     
     &:focus-within {
-      border-color: #1976d2;
+      // background: white;
+      // border-color: #e0e0e0;
     }
     
     .search-input {
       flex: 1;
       border: none;
       outline: none;
-      padding: 0.75rem 1rem;
-      font-size: 0.9rem;
+      padding: 12px 16px;
+      font-size: 14px;
       background: transparent;
-      box-shadow: none;
+      color: #1a1a1a;
+      font-weight: 400;
       
       &::placeholder {
-        color: #6c757d;
+        color: #999999;
+        font-weight: 400;
       }
       
       &::selection {
-        background: #1976d2 !important;
-        color: white !important;
-        text-shadow: none !important;
-        backdrop-filter: none !important;
+        background: #f0f0f0;
+        color: #1a1a1a;
       }
       
       &::-moz-selection {
-        background: #1976d2 !important;
-        color: white !important;
-        text-shadow: none !important;
+        background: #f0f0f0;
+        color: #1a1a1a;
       }
     }
     
     .search-button {
       background: none;
       border: none;
-      padding: 0.875rem;
+      padding: 12px 16px;
       cursor: pointer;
-      color: #6c757d;
-      transition: all 0.3s ease;
+      color: #999999;
+      transition: color 0.2s ease;
       
       &:hover {
-        color: #1976d2;
-        background-color: rgba(25, 118, 210, 0.05);
+        color: #666666;
+      }
+      
+      svg {
+        width: 16px;
+        height: 16px;
       }
     }
   }
@@ -953,52 +927,27 @@ const flattenHeaders = (headers) => {
     z-index: 1001;
     max-height: 600px;
     overflow-y: auto;
-    border: 1px solid #dee2e6;
-    border-radius: 6px;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
     background: white;
     width: 480px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     
-    /* 自定义滚动条样式 */
-    scrollbar-width: thin;
-    scrollbar-color: transparent transparent;
-    transition: scrollbar-color 0.3s ease;
+    /* 隐藏滚动条 */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
     
     &::-webkit-scrollbar {
-      width: 4px;
-    }
-    
-    &::-webkit-scrollbar-track {
-      background: transparent;
-      border-radius: 2px;
-    }
-    
-    &::-webkit-scrollbar-thumb {
-      background: transparent;
-      border-radius: 2px;
-      transition: background 0.3s ease;
-    }
-    
-    /* 悬停时显示滚动条 */
-    &:hover {
-      scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
-      
-      &::-webkit-scrollbar-thumb {
-        background: rgba(0, 0, 0, 0.2);
-      }
-      
-      &::-webkit-scrollbar-thumb:hover {
-        background: rgba(0, 0, 0, 0.4);
-      }
+      display: none;
     }
     
     .search-result-item {
       display: flex;
-      padding: 1rem;
-      border-bottom: 1px solid #f0f0f0;
+      padding: 20px 24px;
+      border-bottom: 1px solid #f8f8f8;
       cursor: pointer;
-      transition: background-color 0.3s ease;
-      gap: 1rem;
+      transition: background-color 0.15s ease;
+      gap: 16px;
       align-items: flex-start;
       
       &:last-child {
@@ -1006,22 +955,27 @@ const flattenHeaders = (headers) => {
       }
       
       &:hover {
-        background-color: #f8f9fa;
+        background-color: #fafafa;
       }
       
       .result-left {
         display: flex;
         align-items: flex-start;
-        gap: 0.75rem;
+        gap: 12px;
         flex: 1;
         min-width: 200px;
       }
       
       .result-icon {
-        font-size: 1.2rem;
-        color: #6c757d;
-        margin-top: 0.1rem;
+        font-size: 16px;
+        color: #666666;
+        margin-top: 2px;
         flex-shrink: 0;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
       
       .result-info {
@@ -1030,279 +984,223 @@ const flattenHeaders = (headers) => {
       }
       
       .result-page {
-        font-size: 0.75rem;
-        color: #8e8e93;
-        margin-bottom: 0.3rem;
+        font-size: 11px;
+        color: #999999;
+        margin-bottom: 4px;
         text-transform: uppercase;
         font-weight: 500;
         letter-spacing: 0.5px;
       }
       
       .result-title {
-        font-weight: 600;
-        color: #1976d2;
-        font-size: 0.9rem;
-        margin-bottom: 0.3rem;
-        line-height: 1.3;
+        font-weight: 500;
+        color: #1a1a1a;
+        font-size: 14px;
+        margin-bottom: 4px;
+        line-height: 1.4;
       }
       
       .result-path {
-        font-size: 0.7rem;
-        color: #a0a0a0;
-        font-family: monospace;
-        background: #f8f9fa;
-        padding: 0.2rem 0.4rem;
-        border-radius: 3px;
+        font-size: 11px;
+        color: #999999;
+        font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+        background: #f8f8f8;
+        padding: 2px 6px;
+        border-radius: 4px;
         display: inline-block;
-        word-break: break-all;
       }
       
       .result-preview {
-        font-size: 0.8rem;
-        color: #6c757d;
-        line-height: 1.4;
+        font-size: 13px;
+        color: #666666;
+        line-height: 1.5;
         flex: 1;
         min-width: 200px;
-        padding-left: 1rem;
-        border-left: 1px solid #e9ecef;
+        padding-left: 16px;
+        border-left: 1px solid #f0f0f0;
         
         :deep(mark) {
-          background-color: #fff3cd;
-          color: #856404;
-          padding: 0 3px;
-          border-radius: 3px;
+          background: #f0f0f0;
+          color: #1a1a1a;
+          padding: 1px 2px;
+          border-radius: 2px;
           font-weight: 500;
         }
       }
     }
   }
   
-  
   .no-results {
     text-align: center;
-    padding: 2rem 1rem;
-    color: #6c757d;
-    font-size: 0.9rem;
-    background: #f8f9fa;
-    margin: 0;
-    border-top: 1px solid #f0f0f0;
+    padding: 40px 24px;
+    color: #999999;
+    font-size: 14px;
+    font-weight: 400;
   }
 }
 
 .nav-section {
-  margin-bottom: 2rem;
+  margin-bottom: 32px;
   
   .section-title {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: #6c757d;
+    font-size: 12px;
+    font-weight: 500;
+    color: #999999;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    margin: 0 0 1rem 1rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid #e9ecef;
+    margin: 0 0 16px 24px;
+    padding: 0;
   }
 }
 
 .nav-list {
   list-style: none;
   margin: 0;
-  padding: 0 10px 0 0;
+  padding: 0;
 }
 
 .nav-sublist {
   list-style: none;
   margin: 0;
   padding: 0;
-  margin-left: 0.5rem;
+  margin-left: 24px;
 }
 
 .sidebar-footer {
-  padding: 1rem;
-  border-top: 1px solid #dee2e6;
+  padding: 24px;
+  border-top: 1px solid #f5f5f5;
   background: white;
   
   .version-info {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 0.8rem;
-    color: #6c757d;
+    font-size: 12px;
+    color: #999999;
+    font-weight: 400;
     
     .version-number {
-      background-color: #e9ecef;
-      padding: 0.2rem 0.5rem;
-      border-radius: 12px;
-      font-weight: 600;
+      background-color: #f5f5f5;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-weight: 500;
+      color: #666666;
     }
   }
 }
 
-// 图标字体
-.icon-home::before { content: '🏠'; font-size: 1.2em; }
-.icon-websocket::before { content: '🔗'; font-size: 1.2em; }
-.icon-user::before { content: '👤'; font-size: 1.2em; }
-.icon-error::before { content: '⚠️'; font-size: 1.2em; }
-.icon-page::before { content: '📄'; font-size: 1.2em; }
-.icon-h1::before { content: '1️⃣'; font-size: 1.1em; }
-.icon-h2::before { content: '2️⃣'; font-size: 1.1em; }
-.icon-h3::before { content: '3️⃣'; font-size: 1.1em; }
-.icon-h4::before { content: '4️⃣'; font-size: 1.1em; }
-.icon-h5::before { content: '5️⃣'; font-size: 1.1em; }
-.icon-h6::before { content: '6️⃣'; font-size: 1.1em; }
-.icon-header::before { content: '📝'; font-size: 1.1em; }
-.icon-external::before { content: '🌐'; font-size: 1.2em; }
-.icon-github::before { content: '📁'; font-size: 1.2em; }
-
-// 暗色主题
+// 暗色主题 - 极简风格
 .custom-sidebar.dark-theme {
-  background: #141414;
-  border-right-color: #404040;
+  background: #1a1a1a;
+  border-right-color: #2a2a2a;
   
   .sidebar-header {
-    background: #2a2a2a;
-    border-bottom-color: #404040;
+    background: #1a1a1a;
+    border-bottom-color: #2a2a2a;
     
     .sidebar-title {
-      color: #64b5f6;
+      color: #ffffff;
     }
   }
-  .header-link{
-    color: #fff!important;
-  }
+  
   .search-section {
-    border-bottom-color: #404040;
+    border-bottom-color: #2a2a2a;
     
     .search-box {
-      background: #3a3a3a;
-      border-color: #525252;
+      background: #2a2a2a;
       
       &:focus-within {
-        border-color: #64b5f6;
+        // background: #333333;
+        // border-color: #404040;
       }
       
       .search-input {
-        color: #e5e5e5;
+        color: #ffffff;
         
         &::placeholder {
-          color: #a0a0a0;
+          color: #999999;
         }
         
         &::selection {
-          background: #64b5f6 !important;
-          color: #000 !important;
-          text-shadow: none !important;
-          backdrop-filter: none !important;
+          background: #404040;
+          color: #ffffff;
         }
         
         &::-moz-selection {
-          background: #64b5f6 !important;
-          color: #000 !important;
-          text-shadow: none !important;
+          background: #404040;
+          color: #ffffff;
         }
       }
       
       .search-button {
-        color: #a0a0a0;
+        color: #999999;
         
         &:hover {
-          color: #64b5f6;
-          background-color: rgba(100, 181, 246, 0.1);
+          color: #cccccc;
         }
       }
     }
     
     .search-results {
-      background: #3a3a3a;
-      border-color: #525252;
-      
-      /* 暗色主题滚动条 */
-      &:hover {
-        scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
-        
-        &::-webkit-scrollbar-thumb {
-          background: rgba(255, 255, 255, 0.25);
-        }
-        
-        &::-webkit-scrollbar-thumb:hover {
-          background: rgba(255, 255, 255, 0.4);
-        }
-      }
+      background: #1a1a1a;
+      border-color: #2a2a2a;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
       
       .search-result-item {
-        border-bottom-color: #525252;
+        border-bottom-color: #2a2a2a;
         
         &:hover {
-          background-color: #454545;
+          background-color: #2a2a2a;
+        }
+        
+        .result-icon {
+          color: #999999;
         }
         
         .result-page {
-          color: #a0a0a0;
+          color: #999999;
         }
         
         .result-title {
-          color: #64b5f6;
+          color: #ffffff;
         }
         
         .result-path {
-          color: #808080;
-          background: #404040;
+          color: #999999;
+          background: #2a2a2a;
         }
         
         .result-preview {
-          color: #b0b0b0;
-          border-left-color: #525252;
+          color: #cccccc;
+          border-left-color: #2a2a2a;
           
           :deep(mark) {
-            background-color: #404040;
-            color: #64b5f6;
+            background: #404040;
+            color: #ffffff;
           }
         }
       }
     }
     
-    
     .no-results {
-      background: #3a3a3a;
-      color: #a0a0a0;
-      border-top-color: #525252;
-    }
-  }
-  
-  /* 暗色主题侧边栏导航滚动条 */
-  .sidebar-nav {
-    &:hover {
-      scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
-      
-      &::-webkit-scrollbar-thumb {
-        background: rgba(255, 255, 255, 0.25);
-      }
-      
-      &::-webkit-scrollbar-thumb:hover {
-        background: rgba(255, 255, 255, 0.4);
-      }
-    }
-    
-    &::-webkit-scrollbar-thumb:active {
-      background: rgba(255, 255, 255, 0.5);
+      color: #999999;
     }
   }
   
   .section-title {
-    color: #b0b0b0;
-    border-bottom-color: #404040;
+    color: #999999;
   }
   
   .sidebar-footer {
-    background: #2a2a2a;
-    border-top-color: #404040;
+    background: #1a1a1a;
+    border-top-color: #2a2a2a;
     
     .version-info {
-      color: #b0b0b0;
+      color: #999999;
       
       .version-number {
-        background-color: #404040;
-        color: #e0e0e0;
+        background-color: #2a2a2a;
+        color: #cccccc;
       }
     }
   }
@@ -1320,3 +1218,4 @@ const flattenHeaders = (headers) => {
   }
 }
 </style>
+

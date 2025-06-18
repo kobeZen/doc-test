@@ -244,7 +244,7 @@ onMounted(() => {
         const navbar = document.querySelector('.navbar')
         const navbarHeight = navbar ? navbar.offsetHeight : 60
         const elementTop = targetElement.getBoundingClientRect().top + window.pageYOffset
-        const scrollToPosition = elementTop - navbarHeight + 60 // 往下额外滚动60px
+        const scrollToPosition = elementTop - navbarHeight - 20 // 标题距离导航栏20px
         
         window.scrollTo({
           top: scrollToPosition,

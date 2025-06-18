@@ -257,8 +257,8 @@
     backdrop-filter: blur(8px);
     
     &:focus {
-      border-color: var(--c-brand);
-      box-shadow: 0 0 0 2px rgba(79, 193, 255, 0.3);
+      // border-color: var(--c-brand);
+      // box-shadow: 0 0 0 2px rgba(79, 193, 255, 0.3);
     }
   }
   
@@ -754,7 +754,7 @@ html {
     
     &:hover {
       transform: scale(1.05);
-      box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
+      // box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
     }
   }
   
@@ -767,7 +767,7 @@ html {
     
     &:focus {
       border-color: var(--c-brand);
-      box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+      // box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
       outline: none;
     }
   }
