@@ -806,7 +806,7 @@ const flattenHeaders = (headers) => {
 
 <style lang="scss" scoped>
 .custom-sidebar {
-  width: 280px;
+  width: 300px;
   height: 100vh;
   background: #ffffff;
   border-right: 1px solid #f0f0f0;
@@ -1041,7 +1041,7 @@ const flattenHeaders = (headers) => {
 
 .nav-section {
   margin-bottom: 32px;
-  padding: 0 16px;
+  padding: 0 16px 0 12px;
   .section-title {
     font-size: 12px;
     font-weight: 500;

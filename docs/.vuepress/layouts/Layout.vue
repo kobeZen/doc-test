@@ -543,8 +543,8 @@ onUnmounted(() => {
   }
   
   .content-wrapper {
-    margin-left: 280px;
-    max-width: calc(100% - 280px);
+    margin-left: 300px;
+    max-width: calc(100% - 300px);
     padding: 2rem;
     .page-main{
       margin: 0 auto;
