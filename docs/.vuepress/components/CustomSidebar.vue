@@ -1041,7 +1041,7 @@ const flattenHeaders = (headers) => {
 
 .nav-section {
   margin-bottom: 32px;
-  
+  padding: 0 16px;
   .section-title {
     font-size: 12px;
     font-weight: 500;

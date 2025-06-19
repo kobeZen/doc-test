@@ -1,19 +1,6 @@
 <template>
   <li class="header-item" :class="[`level-${header.level}`, { 'has-children': hasChildren, 'is-expanded': isExpanded, 'is-active': isActive }]">
     <div class="header-content" @click="handleToggle">
-      <!-- 展开/折叠按钮 -->
-      <button 
-        v-if="hasChildren"
-        class="expand-btn"
-        :class="{ 'expanded': isExpanded }"
-        
-      >
-        <svg class="expand-icon" viewBox="0 0 24 24" width="20" height="20">
-          <path fill="currentColor" d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/>
-        </svg>
-      </button>
-      <div v-else class="expand-placeholder"></div>
-      
       <!-- 标题链接 -->
       <a 
         :href="'#' + header.slug"
@@ -23,6 +10,18 @@
       >
         <span class="header-text">{{ header.title }}</span>
       </a>
+      
+      <!-- 展开/折叠按钮 - 移动到右侧 -->
+      <button 
+        v-if="hasChildren"
+        class="expand-btn"
+        :class="{ 'expanded': isExpanded }"
+        
+      >
+        <svg class="expand-icon" viewBox="0 0 24 24" width="16" height="16">
+          <path fill="currentColor" d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/>
+        </svg>
+      </button>
     </div>
     
     <!-- 子标题列表 -->
@@ -113,7 +112,8 @@ const handleToggle = () => {
 
 .header-content {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
+  justify-content: space-between;
   margin-left: var(--indent);
   padding: 0;
   border-radius: 6px;
@@ -130,15 +130,14 @@ const handleToggle = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 30px;
-  height: 30px;
-  margin-right: 0;
-  margin-top: -1px;
+  width: 24px;
+  height: 24px;
+  margin-left: 8px;
   background: none;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  color: #6c757d;
+  color: #999999;
   transition: all 0.2s ease;
   flex-shrink: 0;
   
@@ -152,14 +151,6 @@ const handleToggle = () => {
       transform: rotate(90deg);
     }
   }
-}
-
-.expand-placeholder {
-  width: 30px;
-  height: 30px;
-  margin-right: 0.5rem;
-  // margin-top: 0.25rem;
-  flex-shrink: 0;
 }
 
 .expand-icon {
@@ -176,7 +167,7 @@ const handleToggle = () => {
   line-height: 1.4;
   transition: all 0.2s ease;
   padding: 0.25rem 0;
-  width: 100%;
+  min-width: 0; // 允许文本缩小
   
   &:hover {
     color: #131B26;
@@ -186,8 +177,6 @@ const handleToggle = () => {
     color: #131B26;
     font-weight: 600;
     position: relative;
-    
-   
   }
 }
 
