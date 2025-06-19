@@ -18,7 +18,7 @@
         :class="{ 'expanded': isExpanded }"
         
       >
-        <svg class="expand-icon" viewBox="0 0 24 24" width="16" height="16">
+        <svg class="expand-icon" viewBox="0 0 24 24" width="24" height="24">
           <path fill="currentColor" d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/>
         </svg>
       </button>
@@ -130,8 +130,8 @@ const handleToggle = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
+  width: 32px;
+  height: 32px;
   margin-left: 8px;
   background: none;
   border: none;
