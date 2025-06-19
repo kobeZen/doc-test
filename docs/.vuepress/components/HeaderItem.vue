@@ -166,7 +166,7 @@ const handleToggle = () => {
   font-weight: var(--text-weight);
   line-height: 1.4;
   transition: all 0.2s ease;
-  padding: 0.25rem 0;
+  padding: 8px 12px;
   min-width: 0; // 允许文本缩小
   
   &:hover {
